@@ -1,0 +1,80 @@
+name: aree_attesa_ud
+description: App educativa sul rischio sismico per Udine - Tesi Universitaria
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.5.1
+  riverpod: ^2.5.1
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/grid.json
+    - assets/data/safe_zones.geojson.json
+
+    - assets/safeZones/0/
+    - assets/safeZones/1/
+    - assets/safeZones/2/
+    - assets/safeZones/3/
+    - assets/safeZones/4/
+    - assets/safeZones/5/
+    - assets/safeZones/6/
+    - assets/safeZones/7/
+    - assets/safeZones/8/
+    - assets/safeZones/9/
+    - assets/safeZones/10/
+    - assets/safeZones/11/
+    - assets/safeZones/12/
+    - assets/safeZones/13/
+    - assets/safeZones/14/
+    - assets/safeZones/15/
+    - assets/safeZones/16/
+    - assets/safeZones/17/
+    - assets/safeZones/18/
+    - assets/safeZones/19/
+    - assets/safeZones/20/
+    - assets/safeZones/21/
+    - assets/safeZones/22/  
+    - assets/safeZones/23/
+    - assets/safeZones/24/
+    - assets/safeZones/25/
+    - assets/safeZones/26/
+    - assets/safeZones/27/
+    - assets/safeZones/28/
+    - assets/safeZones/29/
+    - assets/safeZones/30/
+    - assets/safeZones/31/
+    - assets/safeZones/32/
+    - assets/safeZones/33/
+    - assets/safeZones/34/
+    - assets/safeZones/35/
+    - assets/safeZones/36/
+    - assets/safeZones/37/
+    - assets/safeZones/38/
+    - assets/safeZones/39/
+    - assets/safeZones/40/
+    - assets/safeZones/41/
+    - assets/safeZones/42/
+    - assets/safeZones/43/
+    - assets/safeZones/44/
+    - assets/safeZones/45/
+    - assets/safeZones/46/
+    - assets/safeZones/47/
+    - assets/safeZones/48/
+    - assets/safeZones/49/
+    - assets/safeZones/50/
+    - assets/safeZones/51/
