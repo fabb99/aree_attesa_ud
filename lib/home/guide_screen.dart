@@ -536,7 +536,7 @@ const _gameBGuide = _GuideConfig(
       'Il punteggio massimo per partita è 5000 punti (5 round × 1000).',
   tip:
       'Se sei lontano, non fare tentativi a caso: osserva il numero sulla cella '
-      'sbagliata e cerca in quella direzione. Ricorda la griglia degli sbagli precedenti!',
+      'indica quante celle è distante. Ricorda la griglia degli sbagli precedenti!',
 );
 
 const _gameCGuide = _GuideConfig(

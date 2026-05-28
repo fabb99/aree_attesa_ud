@@ -219,9 +219,9 @@ class _PhotoPhase extends StatelessWidget {
                           color: const Color(0xFF1565C0).withAlpha(204),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Text(
+                        child: const Text(
                           'AREA DI ATTESA',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.w700,

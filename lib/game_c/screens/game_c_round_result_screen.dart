@@ -185,9 +185,9 @@ class _PinWidget extends StatelessWidget {
           decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(6),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
-                  color: Colors.black38, blurRadius: 4, offset: const Offset(0, 2))
+                  color: Colors.black38, blurRadius: 4, offset: Offset(0, 2))
             ],
           ),
           child: Text(
