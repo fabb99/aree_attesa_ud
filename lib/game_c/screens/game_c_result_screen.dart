@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/game_c_state.dart';
 import '../providers/game_c_provider.dart';
+import '../screens/game_c_screen.dart';
 
 class GameCResultScreen extends ConsumerWidget {
   const GameCResultScreen({super.key});
@@ -51,11 +52,10 @@ class GameCResultScreen extends ConsumerWidget {
   }
 
   void _playAgain(BuildContext context, WidgetRef ref) {
-    ref.read(gameCProvider.notifier).initGame(
-          gridRepo: ref.read(gridRepositoryProvider),
-          szRepo: ref.read(safeZoneRepositoryProvider),
-        );
-    Navigator.of(context).pop();
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const GameCScreen()),
+    );
   }
 
   void _goHome(BuildContext context) {

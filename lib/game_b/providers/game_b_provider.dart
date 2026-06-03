@@ -145,4 +145,5 @@ class _RoundTarget {
 // ─── Provider ────────────────────────────────────────────────────────────────
 
 final gameBProvider =
-    StateNotifierProvider<GameBNotifier, GameBState>((ref) => GameBNotifier());
+    StateNotifierProvider.autoDispose<GameBNotifier, GameBState>(
+        (ref) => GameBNotifier());

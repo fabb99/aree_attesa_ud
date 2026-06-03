@@ -129,4 +129,5 @@ class GameANotifier extends StateNotifier<GameAState> {
 // ─── Provider ────────────────────────────────────────────────────────────────
 
 final gameAProvider =
-    StateNotifierProvider<GameANotifier, GameAState>((ref) => GameANotifier());
+    StateNotifierProvider.autoDispose<GameANotifier, GameAState>(
+        (ref) => GameANotifier());

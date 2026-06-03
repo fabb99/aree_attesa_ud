@@ -25,7 +25,7 @@ class _GameAScreenState extends ConsumerState<GameAScreen> {
   @override
   void initState() {
     super.initState();
-    _startGame();
+    Future.microtask(() => _startGame());
   }
 
   Future<void> _startGame() async {

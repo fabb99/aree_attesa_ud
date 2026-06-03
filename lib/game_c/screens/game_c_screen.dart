@@ -40,7 +40,7 @@ class _GameCScreenState extends ConsumerState<GameCScreen>
       curve: Curves.easeOutCubic,
     ));
 
-    _startGame();
+    Future.microtask(() => _startGame());
   }
 
   Future<void> _startGame() async {

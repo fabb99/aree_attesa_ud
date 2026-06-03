@@ -8,6 +8,7 @@ import '../../core/models/hex_cell.dart';
 import '../providers/game_a_provider.dart';
 import '../../core/widgets/hex_grid_layer.dart';
 import '../../core/widgets/found_zone_banner.dart';
+import '../screens/game_a_screen.dart';
 
 class GameAResultScreen extends ConsumerStatefulWidget {
   const GameAResultScreen({super.key});
@@ -132,11 +133,10 @@ class _GameAResultScreenState extends ConsumerState<GameAResultScreen> {
   }
 
   void _restart() {
-    Navigator.of(context).pop();
-    ref.read(gameAProvider.notifier).initGame(
-          gridRepo: ref.read(gridRepositoryProvider),
-          szRepo: ref.read(safeZoneRepositoryProvider),
-        );
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const GameAScreen()),
+    );
   }
 }
 
