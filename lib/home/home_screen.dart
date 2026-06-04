@@ -2,10 +2,43 @@ import 'package:flutter/material.dart';
 import '../game_a/screens/game_a_screen.dart';
 import '../game_b/screens/game_b_screen.dart';
 import '../game_c/screens/game_c_screen.dart';
-import 'guide_screen.dart'; // ← aggiunto
+import 'guide_screen.dart';
+import 'onboarding_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Controlla al primo frame se mostrare l'onboarding
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkOnboarding());
+  }
+
+  Future<void> _checkOnboarding() async {
+    if (await OnboardingScreen.shouldShow()) {
+      if (mounted) _openOnboarding(manual: false);
+    }
+  }
+
+  void _openOnboarding({bool manual = true}) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) =>
+            OnboardingScreen(manualOpen: manual),
+        transitionsBuilder: (_, animation, __, child) => FadeTransition(
+          opacity: animation,
+          child: child,
+        ),
+        transitionDuration: const Duration(milliseconds: 350),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +57,11 @@ class HomeScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const GuideScreen()),
                   ),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 24),
+
+                // ── Banner "Preparati" ────────────────────────────────────
+                _PreparatiCard(onTap: () => _openOnboarding()),
+                const SizedBox(height: 32),
 
                 // ── Sottotitolo sezione ───────────────────────────────────
                 const Text(
@@ -115,11 +152,104 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+// ── Banner "Preparati" ─────────────────────────────────────────────────────────
+
+class _PreparatiCard extends StatefulWidget {
+  final VoidCallback onTap;
+  const _PreparatiCard({required this.onTap});
+
+  @override
+  State<_PreparatiCard> createState() => _PreparatiCardState();
+}
+
+class _PreparatiCardState extends State<_PreparatiCard> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _pressed = true),
+      onTapUp: (_) {
+        setState(() => _pressed = false);
+        widget.onTap();
+      },
+      onTapCancel: () => setState(() => _pressed = false),
+      child: AnimatedScale(
+        scale: _pressed ? 0.97 : 1.0,
+        duration: const Duration(milliseconds: 100),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF8B0000), Color(0xFFB71C1C)],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFE53935).withAlpha(60),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: Colors.white.withAlpha(20),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.crisis_alert_rounded,
+                  color: Colors.white,
+                  size: 26,
+                ),
+              ),
+              const SizedBox(width: 14),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Preparati all\'emergenza',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      'Cosa fare in caso di terremoto · Le aree di attesa',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: Colors.white54,
+                size: 16,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // ── Header dell'app ────────────────────────────────────────────────────────────
 
 class _AppHeader extends StatelessWidget {
-  /// Callback per aprire la guida — iniettato dalla Home per mantenere
-  /// _AppHeader privo di dipendenze da Navigator/context.
   final VoidCallback onGuide;
 
   const _AppHeader({required this.onGuide});
@@ -132,7 +262,6 @@ class _AppHeader extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Logo
             Container(
               width: 42,
               height: 42,
@@ -170,7 +299,6 @@ class _AppHeader extends StatelessWidget {
                 ],
               ),
             ),
-            // ── Bottone guida ────────────────────────────────────────
             Tooltip(
               message: 'Come si gioca',
               child: GestureDetector(
@@ -285,7 +413,6 @@ class _GameCardState extends State<_GameCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Label + badge
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -319,8 +446,6 @@ class _GameCardState extends State<_GameCard> {
                   ],
                 ),
                 const SizedBox(height: 12),
-
-                // Icon + titolo
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -350,8 +475,6 @@ class _GameCardState extends State<_GameCard> {
                   ],
                 ),
                 const SizedBox(height: 14),
-
-                // Descrizione
                 Text(
                   widget.description,
                   style: const TextStyle(
@@ -361,8 +484,6 @@ class _GameCardState extends State<_GameCard> {
                   ),
                 ),
                 const Spacer(),
-
-                // Pulsante gioca
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
