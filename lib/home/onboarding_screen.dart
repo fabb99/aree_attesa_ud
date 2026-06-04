@@ -434,9 +434,8 @@ const _pageData1 = _PageData(
   icon: Icons.crisis_alert_rounded,
   accentColor: Color(0xFFE53935),
   body:
-      'Udine si trova in Zona Sismica 2, una delle aree a maggiore pericolosità d\'Italia. '
-      'Il Friuli ha già vissuto eventi devastanti — il terremoto del 1976 ne è la memoria più viva.\n\n'
-      'Non possiamo sapere quando arriverà la prossima scossa, ma possiamo prepararci in anticipo.',
+      'I terremoti non possono essere previsti, ma i loro effetti possono essere ridotti attraverso la preparazione e la consapevolezza.\n\n'
+      'In caso di terremoto, seguire comportamenti adeguati contribuisce a ridurre i rischi. Ecco le principali indicazioni:',
   bullets: [
     'Durante la scossa: riparati sotto un tavolo robusto o accanto a un muro portante. Allontanati da finestre e oggetti che possono cadere.',
     'Dopo la scossa: esci con calma dall\'edificio, non usare ascensori, attenzione ai detriti.',
@@ -452,12 +451,12 @@ const _pageData2 = _PageData(
   body:
       'Le aree di attesa sono spazi aperti sicuri — piazze, parchi, parcheggi — '
       'dove la popolazione si raccoglie subito dopo un\'emergenza.\n\n'
-      'Qui troverai le prime informazioni sull\'evento, assistenza della Protezione Civile '
+      'Nelle aree di attesa troverai le prime informazioni sull\'evento, assistenza della Protezione Civile '
       'e i primi generi di conforto mentre vengono organizzati i soccorsi.',
   bullets: [
     'Sono lontane da edifici che potrebbero crollare e da zone alluvionali.',
     'Sono facilmente raggiungibili a piedi attraverso percorsi sicuri.',
-    'A Udine ne sono state individuate oltre 40, distribuite in tutto il territorio comunale.',
+    //'A Udine ne sono state individuate oltre 40, distribuite in tutto il territorio comunale.',
   ],
 );
 
