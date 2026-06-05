@@ -7,6 +7,7 @@ import '../models/game_c_state.dart';
 import '../providers/game_c_provider.dart';
 import '../photo/game_c_photo_provider.dart';
 import 'game_c_round_result_screen.dart';
+import 'game_c_result_screen.dart';
 
 class GameCScreen extends ConsumerStatefulWidget {
   const GameCScreen({super.key});
@@ -48,6 +49,72 @@ class _GameCScreenState extends ConsumerState<GameCScreen>
           gridRepo: ref.read(gridRepositoryProvider),
           szRepo: ref.read(safeZoneRepositoryProvider),
         );
+  }
+
+  Future<void> _onEndGameRequested() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Color(0xFF2E7D32), width: 1.5),
+        ),
+        title: const Row(
+          children: [
+            Icon(Icons.flag, color: Color(0xFFEF5350), size: 24),
+            SizedBox(width: 10),
+            Text(
+              'Termina partita',
+              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: const Text(
+          'Vuoi terminare la partita adesso?\nTutte le aree di attesa non ancora trovate verranno rivelate.',
+          style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
+        ),
+        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        actions: [
+          // Annulla
+          OutlinedButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.white60,
+              side: const BorderSide(color: Colors.white24),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+            child: const Text('Annulla'),
+          ),
+          // Conferma
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFB71C1C),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+            child: const Text('Termina', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+ 
+    if (confirmed == true && mounted) {
+      ref.read(gameCProvider.notifier).endGame();
+      _navigateToResults();
+    }
+  }
+
+  void _navigateToResults() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const GameCResultScreen(),
+      ),
+    );
   }
 
   void _onStartGuessing() {
@@ -92,6 +159,7 @@ class _GameCScreenState extends ConsumerState<GameCScreen>
                 state: state,
                 photoProvider: photoProvider,
                 onStartGuessing: _onStartGuessing,
+                onEndGame: _onEndGameRequested,
               ),
       
             // ── Fase guess (mappa) ───────────────────────────────────────
@@ -106,6 +174,7 @@ class _GameCScreenState extends ConsumerState<GameCScreen>
                       setState(() => _currentCamera = camera),
                   onMapTap: _onMapTap,
                   onConfirm: _onConfirmGuess,
+                  onEndGame: _onEndGameRequested,
                 ),
               ),
           ],
@@ -147,22 +216,24 @@ class _PhotoPhase extends StatelessWidget {
   final GameCState state;
   final GameCPhotoProvider photoProvider;
   final VoidCallback onStartGuessing;
+  final VoidCallback onEndGame; // callback per il bottone termina
 
   const _PhotoPhase({
     required this.state,
     required this.photoProvider,
     required this.onStartGuessing,
+    required this.onEndGame
   });
 
   @override
   Widget build(BuildContext context) {
     final target = state.targetZone!;
     final screenHeight = MediaQuery.of(context).size.height;
-
+    
     return Column(
       children: [
         // ── HUD round ─────────────────────────────────────────────────
-        _RoundHud(state: state),
+        _RoundHud(state: state, onEndGame: onEndGame),
 
         // ── Foto ──────────────────────────────────────────────────────
         Expanded(
@@ -284,6 +355,7 @@ class _GuessPhase extends StatelessWidget {
   final ValueChanged<MapCamera> onCameraChanged;
   final Function(TapPosition, LatLng) onMapTap;
   final VoidCallback onConfirm;
+  final VoidCallback onEndGame; // callback per il bottone termina
 
   const _GuessPhase({
     required this.state,
@@ -292,6 +364,7 @@ class _GuessPhase extends StatelessWidget {
     required this.onCameraChanged,
     required this.onMapTap,
     required this.onConfirm,
+    required this.onEndGame
   });
 
   @override
@@ -343,7 +416,7 @@ class _GuessPhase extends StatelessWidget {
         ),
 
         // ── HUD round ────────────────────────────────────────────────
-        _RoundHud(state: state),
+        _RoundHud(state: state, onEndGame: onEndGame,),
 
         // ── Istruzione tap ────────────────────────────────────────────
         if (!hasGuess)
@@ -406,8 +479,8 @@ class _GuessPhase extends StatelessWidget {
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          //maxLines: 1,
+                          //overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -450,7 +523,8 @@ class _GuessPhase extends StatelessWidget {
 
 class _RoundHud extends StatelessWidget {
   final GameCState state;
-  const _RoundHud({required this.state});
+  const _RoundHud({required this.state, required this.onEndGame});
+  final VoidCallback onEndGame; // callback per il bottone termina
 
   @override
   Widget build(BuildContext context) {
@@ -485,6 +559,34 @@ class _RoundHud extends StatelessWidget {
               value: '${state.totalScore}',
               color: const Color(0xFFFFD700),
             ),
+
+            GestureDetector(
+                onTap: onEndGame,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFB71C1C).withAlpha(217),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.red.shade300, width: 0.8),
+                  ),
+                  child: const Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.flag, color: Colors.white, size: 14),
+                      SizedBox(height: 2),
+                      Text(
+                        'Fine',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
           ],
         ),
       ),

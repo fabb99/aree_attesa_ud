@@ -34,7 +34,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   late final AnimationController _fadeController;
   late final Animation<double> _fadeAnim;
 
-  static const _pages = [_pageData1, _pageData2, _pageData3];
+  //static const _pages = [_pageData1, _pageData2, _pageData3]; 
+  //rimosso _pageData1 _pageData2
+  static const _pages = [_pageData3];
 
   @override
   void initState() {

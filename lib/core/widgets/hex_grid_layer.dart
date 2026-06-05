@@ -104,11 +104,12 @@ class _HexGridPainter extends CustomPainter {
     // Label: nel Gioco A mostra adiacenti, nel Gioco B mostra distanza dal target
     if (mode == HexGridMode.gameB) {
       if (cell.distanceToNearest != null && cell.distanceToNearest! > 0) {
+
         _drawLabel(
           canvas,
           '${cell.distanceToNearest}',
           _centroid(vertices),
-          Colors.white,
+          cell.distanceToNearest==2 ? Colors.black87  : Colors.white ,// se distanza 2 allora scrivilo nero
         );
       }
     } else {

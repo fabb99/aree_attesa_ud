@@ -17,16 +17,7 @@ export '../../../core/app_providers.dart'
     show gridRepositoryProvider, safeZoneRepositoryProvider;
 
 // ─── Photo provider ───────────────────────────────────────────────────────────
-//
-// Aggiungi qui i file per ogni safe zone.
-// La chiave è safe_zone.id (intero), il valore è la lista dei nomi file
-// dentro assets/safeZones/{id}/
-//
-// Esempio:
-//   0: ['355903.png.jpeg', '355904.png.jpeg'],
-//   1: ['355560.png.jpeg', '355561.png.jpeg'],
-//
-// Per aggiungere una nuova area basta aggiungere una riga qui.
+
 
 final gameCPhotoProvider = Provider<GameCPhotoProvider>(
   (_) => const AssetPhotoProvider(),
@@ -119,6 +110,12 @@ class GameCNotifier extends StateNotifier<GameCState> {
       clearGuess: true,
       phase: GameCPhase.showPhoto,
     );
+  }
+
+  void endGame() {
+    if (state.phase != GameCPhase.guessing &&
+        state.phase != GameCPhase.showPhoto) return;
+    state = state.copyWith(phase: GameCPhase.finished);
   }
 
   GameCService get service => _service;

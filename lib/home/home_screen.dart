@@ -80,14 +80,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 260,
                   child: _GameCard(
                     label: 'GIOCO A',
-                    title: 'Campo\nMinato',
+                    title: 'Campo\nFiorito',
                     description:
                         'Esplora la mappa di Udine e scopri le aree di attesa della Protezione Civile. Usa i colori come guida.',
                     icon: Icons.grid_on_rounded,
                     accentColor: const Color(0xFF2E7D32),
                     highlightColor: const Color(0xFF4CAF50),
-                    badgeText: '💣 Minesweeper',
+                    badgeText: '🌸 Esplora',
                     onTap: () => _navigate(context, const GameAScreen()),
+                    onGuide: () => Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (_) => const GuideScreen(initialIndex: 0),
+    ),
+  ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -105,6 +110,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     highlightColor: const Color(0xFF42A5F5),
                     badgeText: '📍 Localizza',
                     onTap: () => _navigate(context, const GameBScreen()),
+                    onGuide: () => Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (_) => const GuideScreen(initialIndex: 1),
+    ),
+  ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -122,6 +132,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     highlightColor: const Color(0xFFCE93D8),
                     badgeText: '📸 GeoGuesser',
                     onTap: () => _navigate(context, const GameCScreen()),
+                    onGuide: () => Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (_) => const GuideScreen(initialIndex: 2),
+    ),
+  ),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -326,7 +341,7 @@ class _AppHeader extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         const Text(
-          'Impara a conoscere\nla tua città.',
+          'Impara a conoscere\nla tua città',
           style: TextStyle(
             color: Colors.white,
             fontSize: 28,
@@ -360,6 +375,7 @@ class _GameCard extends StatefulWidget {
   final Color highlightColor;
   final String badgeText;
   final VoidCallback onTap;
+  final VoidCallback onGuide;
 
   const _GameCard({
     required this.label,
@@ -370,6 +386,7 @@ class _GameCard extends StatefulWidget {
     required this.highlightColor,
     required this.badgeText,
     required this.onTap,
+    required this.onGuide
   });
 
   @override
@@ -378,6 +395,7 @@ class _GameCard extends StatefulWidget {
 
 class _GameCardState extends State<_GameCard> {
   bool _pressed = false;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -487,6 +505,36 @@ class _GameCardState extends State<_GameCard> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+
+                    GestureDetector(
+      onTap: widget.onGuide,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: widget.accentColor.withAlpha(128)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.help_outline_rounded,
+                color: widget.highlightColor, size: 16),
+            const SizedBox(width: 6),
+            Text(
+              'Come si gioca',
+              style: TextStyle(
+                color: widget.highlightColor,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+    const SizedBox(width: 10),
+
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 10),

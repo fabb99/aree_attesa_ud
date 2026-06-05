@@ -8,6 +8,7 @@ import '../../core/widgets/hex_cell_color_mapper.dart';
 import '../models/game_b_state.dart';
 import '../providers/game_b_provider.dart';
 import 'game_b_round_result_screen.dart';
+import 'game_b_result_screen.dart';
  
 class GameBScreen extends ConsumerStatefulWidget {
   const GameBScreen({super.key});
@@ -39,6 +40,72 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
         );
   }
  
+  Future<void> _onEndGameRequested() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Color(0xFF2E7D32), width: 1.5),
+        ),
+        title: const Row(
+          children: [
+            Icon(Icons.flag, color: Color(0xFFEF5350), size: 24),
+            SizedBox(width: 10),
+            Text(
+              'Termina partita',
+              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: const Text(
+          'Vuoi terminare la partita adesso?\nTutte le aree di attesa non ancora trovate verranno rivelate.',
+          style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
+        ),
+        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        actions: [
+          // Annulla
+          OutlinedButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.white60,
+              side: const BorderSide(color: Colors.white24),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+            child: const Text('Annulla'),
+          ),
+          // Conferma
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFB71C1C),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+            child: const Text('Termina', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+ 
+    if (confirmed == true && mounted) {
+      ref.read(gameBProvider.notifier).endGame();
+      _navigateToResults();
+    }
+  }
+
+  void _navigateToResults() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const GameBResultScreen(),
+      ),
+    );
+  }
+
   void _onMapTap(TapPosition tapPos, LatLng latLng) {
     final state = ref.read(gameBProvider);
     if (state.phase != GameBPhase.playing) return;
@@ -123,7 +190,7 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
        
             // ── HUD round ──────────────────────────────────────────────
             if (state.phase == GameBPhase.playing)
-              _GameBHud(state: state),
+              _GameBHud(state: state,  onEndGame: _onEndGameRequested),
        
             // ── Pannello target ─────────────────────────────────────────
             if (state.phase == GameBPhase.playing && state.targetZone != null)
@@ -167,7 +234,8 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
  
 class _GameBHud extends StatelessWidget {
   final GameBState state;
-  const _GameBHud({required this.state});
+  const _GameBHud({required this.state, required this.onEndGame});
+  final VoidCallback onEndGame; // callback per il bottone termina
  
   @override
   Widget build(BuildContext context) {
@@ -214,6 +282,34 @@ class _GameBHud extends StatelessWidget {
               value: '${state.totalScore}',
               color: const Color(0xFFFFD700),
             ),
+            _divider(),
+            // ── Bottone Termina ──────────────────────────────────────
+              GestureDetector(
+                onTap: onEndGame,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFB71C1C).withAlpha(217),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.red.shade300, width: 0.8),
+                  ),
+                  child: const Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.flag, color: Colors.white, size: 14),
+                      SizedBox(height: 2),
+                      Text(
+                        'Fine',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
       ),

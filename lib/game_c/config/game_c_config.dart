@@ -10,10 +10,10 @@ class GameCConfig {
   /// Costante di decadimento della curva esponenziale (in metri).
   /// A [scoreCurveMeters] metri di distanza il punteggio è ~63% del massimo.
   /// Abbassa il valore per rendere il gioco più severo.
-  static const double scoreCurveMeters = 500.0;
+  static const double scoreCurveMeters = 1000.0;
 
   /// Distanza massima oltre la quale il punteggio è 0
-  static const double maxDistanceMeters = 5000.0;
+  static const double maxDistanceMeters = 8000.0;
 
   /// Centro mappa Udine
   static const double mapCenterLat = 46.0648;

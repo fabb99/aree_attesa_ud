@@ -129,6 +129,11 @@ class GameBNotifier extends StateNotifier<GameBState> {
     }
     return null;
   }
+
+  void endGame() {
+    if (state.phase != GameBPhase.playing) return;
+    state = state.copyWith(phase: GameBPhase.finished);
+  }
 }
 
 // ─── Struttura interna ────────────────────────────────────────────────────────

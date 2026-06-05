@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 /// Schermata guida ai giochi — accessibile dalla Home tramite icona "?".
 /// Self-contained: nessun provider, nessuna dipendenza esterna.
 class GuideScreen extends StatefulWidget {
-  const GuideScreen({super.key});
+  const GuideScreen({super.key, this.initialIndex = 0});
+  final int initialIndex;
 
   @override
   State<GuideScreen> createState() => _GuideScreenState();
@@ -16,7 +17,8 @@ class _GuideScreenState extends State<GuideScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    //_tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 3, vsync: this, initialIndex: widget.initialIndex);
   }
 
   @override
@@ -474,7 +476,7 @@ class _LegendEntry {
 
 const _gameAGuide = _GuideConfig(
   gameLabel: 'GIOCO A',
-  title: 'Campo Minato',
+  title: 'Campo Fiorito',
   subtitle: 'Scopri le aree di attesa esplorando la mappa di Udine, una cella alla volta.',
   icon: Icons.grid_on_rounded,
   accentColor: Color(0xFF4CAF50),
