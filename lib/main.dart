@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'home/home_screen.dart';  // ← cambia questo
+import 'features/home/home_screen.dart';  // ← cambia questo
 
 void main() {
   runApp(const ProviderScope(child: AreeAttesaApp()));
