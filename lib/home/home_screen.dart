@@ -314,29 +314,8 @@ class _AppHeader extends StatelessWidget {
                 ],
               ),
             ),
-            Tooltip(
-              message: 'Come si gioca',
-              child: GestureDetector(
-                onTap: onGuide,
-                child: Container(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withAlpha(12),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Colors.white.withAlpha(30),
-                      width: 1,
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.help_outline_rounded,
-                    color: Colors.white60,
-                    size: 20,
-                  ),
-                ),
-              ),
-            ),
+            
+          
           ],
         ),
         const SizedBox(height: 20),

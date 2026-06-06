@@ -72,7 +72,7 @@ class _GameCScreenState extends ConsumerState<GameCScreen>
           ],
         ),
         content: const Text(
-          'Vuoi terminare la partita adesso?\nTutte le aree di attesa non ancora trovate verranno rivelate.',
+          'Vuoi terminare la partita adesso?\nI round non giocati verranno considerati con un punteggio pari a 0.',
           style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
         ),
         actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -523,8 +523,9 @@ class _GuessPhase extends StatelessWidget {
 
 class _RoundHud extends StatelessWidget {
   final GameCState state;
-  const _RoundHud({required this.state, required this.onEndGame});
   final VoidCallback onEndGame; // callback per il bottone termina
+  const _RoundHud({required this.state, required this.onEndGame});
+  
 
   @override
   Widget build(BuildContext context) {

@@ -39,7 +39,7 @@ class HexCell {
 
   HexCell copyWith({
     CellState? state,
-    int? distanceToNearest,
+    Object? distanceToNearest = _sentinel,
     int? adjacentSafeZones,
     bool? isSafeZone,
     String? safeZoneName,
@@ -51,13 +51,17 @@ class HexCell {
       vertices: vertices,
       neighbors: neighbors,
       state: state ?? this.state,
-      distanceToNearest: distanceToNearest ?? this.distanceToNearest,
+      distanceToNearest: distanceToNearest == _sentinel
+        ? this.distanceToNearest
+        : distanceToNearest as int?,
       adjacentSafeZones: adjacentSafeZones ?? this.adjacentSafeZones,
       isSafeZone: isSafeZone ?? this.isSafeZone,
       safeZoneName: safeZoneName ?? this.safeZoneName,
       safeZoneAddress: safeZoneAddress ?? this.safeZoneAddress,
     );
   }
+
+  static const Object _sentinel = Object();
 
   factory HexCell.fromJson(Map<String, dynamic> json) {
     final centerMap = json['center'] as Map<String, dynamic>;

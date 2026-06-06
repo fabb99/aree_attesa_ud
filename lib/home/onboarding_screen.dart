@@ -463,7 +463,7 @@ const _pageData2 = _PageData(
 );
 
 const _pageData3 = _PageData(
-  tag: '03 · PREPARARSI ORA',
+  tag: 'PREPARARSI ORA',//'03 · PREPARARSI ORA',
   title: 'Conosci\nla tua città.',
   icon: Icons.school_rounded,
   accentColor: Color(0xFF43A047),
@@ -474,7 +474,7 @@ const _pageData3 = _PageData(
       'Questa app ti aiuta a imparare giocando — tre modalità diverse '
       'per esplorare e memorizzare le aree di attesa di Udine.',
   bullets: [
-    'Campo Minato: scopri le aree nascoste sulla griglia esplorando la città.',
+    'Campo Fiorito: scopri le aree nascoste sulla griglia esplorando la città.',
     'Localizza l\'Area: trova sulla mappa l\'area indicata per nome e indirizzo.',
     'GeoGuesser: riconosci le aree dalle fotografie e indovina dove si trovano.',
   ],

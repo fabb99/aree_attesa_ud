@@ -61,7 +61,7 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
           ],
         ),
         content: const Text(
-          'Vuoi terminare la partita adesso?\nTutte le aree di attesa non ancora trovate verranno rivelate.',
+          'Vuoi terminare la partita adesso?\nI round non giocati verranno considerati con un punteggio pari a 0.',
           style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
         ),
         actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -234,8 +234,9 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
  
 class _GameBHud extends StatelessWidget {
   final GameBState state;
-  const _GameBHud({required this.state, required this.onEndGame});
   final VoidCallback onEndGame; // callback per il bottone termina
+  const _GameBHud({required this.state, required this.onEndGame});
+  
  
   @override
   Widget build(BuildContext context) {
