@@ -66,12 +66,17 @@ class _PreparatiCardState extends State<PreparatiCard> {
                   children: [
                     Text(
                       'Preparati all\'emergenza',
-                      style: AppTextStyles.button.copyWith(fontSize: 15),
+                      style: AppTextStyles.button.copyWith(
+                        fontSize: 15,
+                        color: AppColors.onColored, // fisso bianco
+                      ),
                     ),
                     const SizedBox(height: 2),
-                    Text(
+                     Text(
                       'Cosa fare in caso di terremoto · Le aree di attesa',
-                      style: AppTextStyles.captionWhite,
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.onColored.withAlpha(178), // bianco attenuato
+                      ),
                     ),
                   ],
                 ),

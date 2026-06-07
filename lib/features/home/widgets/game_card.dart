@@ -223,7 +223,11 @@ class _CardActions extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Gioca', style: AppTextStyles.button.copyWith(fontSize: 14)),
+              Text('Gioca', style: AppTextStyles.button.copyWith(
+                      fontSize: 14,
+                      color: AppColors.onColored, // sempre bianco su sfondo colorato
+                  ),
+              ),
               const SizedBox(width: 6),
               const Icon(Icons.arrow_forward, color: Colors.white, size: 16),
             ],

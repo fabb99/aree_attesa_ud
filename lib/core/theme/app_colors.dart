@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 //-----VERSIONE DARK
-//abstract final class AppColorsDark {
-abstract final class AppColors {
+abstract final class AppColorsDark {
+//abstract final class AppColors {
   // ── Backgrounds ────────────────────────────────────────────────────────────
   static const bgDeep        = Color(0xFF0A0E1A);
   static const bgDark        = Color(0xFF0D1423);
@@ -46,13 +46,31 @@ abstract final class AppColors {
   static const gameBLight    = Color(0xFF42A5F5);
   static const gameC         = Color(0xFF6A1B9A);
   static const gameCLight    = Color(0xFFCE93D8);
+  
+  //-----------
+  // ── Componenti specifici ───────────────────────────────────────────────────
+
+  /// Testo su sfondi colorati (bottoni, banner, HUD) — sempre bianco
+  static const onColored         = Color(0xFFFFFFFF);
+
+  /// Sfondo HUD — abbastanza opaco da essere leggibile sulla mappa
+  static const hudBackground     = Color(0xE6101828); // bgDeep con alpha 90%
+
+  /// Bordo HUD — visibile sulla mappa
+  static const hudBorder         = Color(0x661E2D40);
+
+  /// Sfondo dialog
+  static const dialogBackground  = Color(0xFF111827);
+
+  /// Bordo dialog termina
+  static const dialogBorderEnd   = Color(0xFF2E7D32);
 }
+
+
+
 //-----VERSIONE LIGHT
-
-
-
-abstract final class AppColorsLight {
-//abstract final class AppColors{
+//abstract final class AppColorsLight {
+abstract final class AppColors{
   // ── Backgrounds ────────────────────────────────────────────────────────────
   static const bgDeep        = Color(0xFFF0F4F8); // grigio blu molto chiaro
   static const bgDark        = Color(0xFFE8EDF3); // leggermente più scuro
@@ -96,4 +114,21 @@ abstract final class AppColorsLight {
   static const gameBLight    = Color(0xFF1976D2);
   static const gameC         = Color(0xFF6A1B9A);
   static const gameCLight    = Color(0xFF7B1FA2);
+
+  //-----------
+  // ── Componenti specifici ───────────────────────────────────────────────────
+
+  /// Testo su sfondi colorati — sempre bianco anche in light
+  static const onColored         = Color(0xFFFFFFFF);
+
+  /// Sfondo HUD in light — bianco con alta opacità + ombra
+  /// Non semitrasparente come il dark: sulla mappa chiara serve contrasto
+  static const hudBackground     = Color(0xF5FFFFFF); // bianco quasi opaco
+  static const hudBorder         = Color(0xFFCDD5E0); // bordo grigio visibile
+
+  /// Sfondo dialog
+  static const dialogBackground  = Color(0xFFFFFFFF);
+
+  /// Bordo dialog termina — più scuro per visibilità su bianco
+  static const dialogBorderEnd   = Color(0xFF2E7D32);
 }

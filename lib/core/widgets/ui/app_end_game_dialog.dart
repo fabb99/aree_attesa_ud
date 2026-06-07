@@ -19,10 +19,10 @@ class AppEndGameDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: AppColors.bgCard,
+      backgroundColor: AppColors.hudBackground,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: const BorderSide(color: AppColors.gameA, width: 1.5),
+        side: const BorderSide(color: AppColors.dialogBorderEnd, width: 1.5),
       ),
       title: const Row(
         children: [
@@ -61,15 +61,15 @@ class AppEndGameDialog extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(true),
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.alertRedDark,
-            foregroundColor: Colors.white,
+            foregroundColor: AppColors.onColored,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
-          child: Text(
+          child: const Text(
             'Termina',
-            style: AppTextStyles.button,
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
       ],

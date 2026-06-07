@@ -77,7 +77,7 @@ class GameCPhotoPhase extends StatelessWidget {
                       const SizedBox(height: 8),
                       Text(
                         'Dove si trova\nquest\'area di attesa?',
-                        style: AppTextStyles.heading1.copyWith(fontSize: 24),
+                        style: AppTextStyles.heading1.copyWith(fontSize: 24, color: AppColors.onColored),
                       ),
                       const SizedBox(height: 20),
                       SizedBox(

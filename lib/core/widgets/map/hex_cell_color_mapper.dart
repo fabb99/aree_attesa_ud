@@ -1,7 +1,7 @@
 import 'package:aree_attesa_ud/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import '../../models/hex_cell.dart';
-import '../../theme/app_colors.dart';
+
 
 /// Mappa lo stato di una [HexCell] ai colori di rendering.
 ///

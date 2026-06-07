@@ -70,16 +70,17 @@ class AppHudEndButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: AppColors.alertRed, width: 0.8),
         ),
-        child: Column(
+        child: const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.flag, color: Colors.white, size: 14),
-            const SizedBox(height: 2),
+            Icon(Icons.flag, color: AppColors.onColored, size: 14),
+            SizedBox(height: 2),
             Text(
               'Fine',
-              style: AppTextStyles.buttonSmall.copyWith(
+              style: TextStyle(
                 fontSize: 11,
-                color: Colors.white,
+                color: AppColors.onColored,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],
@@ -105,9 +106,9 @@ class AppHudContainer extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: AppColors.bgDeep.withAlpha(191),
+          color: AppColors.hudBackground,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.borderSubtle),
+          border: Border.all(color: AppColors.hudBorder),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

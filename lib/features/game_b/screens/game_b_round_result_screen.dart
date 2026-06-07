@@ -257,7 +257,8 @@ class _RoundHeader extends StatelessWidget {
   }
 
   String _roundLabel(int score) {
-    if (score >= 900) return '🎯 Perfetto al primo colpo!';
+    if (score == 1000) return '🎯 Perfetto al primo colpo!';
+    if (score >= 900) return '👍 Quasi perfetto';
     if (score >= 600) return '👍 Ottimo!';
     if (score >= 300) return '📚 Ci sei quasi!';
     return '💪 Continua a esplorare!';
