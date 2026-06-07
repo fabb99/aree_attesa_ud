@@ -30,6 +30,7 @@ abstract final class AppColors {
   static const warningOrange = Color(0xFFFF9800);
   static const alertRed      = Color(0xFFEF5350);
   static const alertRedDark  = Color(0xFFB71C1C);
+  static const alertRedDeep  = Color(0xFF8B0000);
   static const gold          = Color(0xFFFFD700);
 
   // ── Distance scale ─────────────────────────────────────────────────────────
@@ -79,6 +80,7 @@ abstract final class AppColorsLight {
   static const warningOrange = Color(0xFFE65100);
   static const alertRed      = Color(0xFFC62828);
   static const alertRedDark  = Color(0xFF8B0000);
+  static const alertRedDeep  = Color(0xFF8B0000);
   static const gold          = Color(0xFFF9A825);
 
   // ── Distance scale ─────────────────────────────────────────────────────────

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../theme/app_colors.dart';
 /// Mostra un banner temporaneo quando l'utente trova un'area di attesa.
 class FoundZoneBanner extends StatelessWidget {
   final String name;
@@ -25,7 +25,7 @@ class FoundZoneBanner extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [Color(0xFF1B5E20), Color(0xFF2E7D32)],
+              colors: [AppColors.safeFound, AppColors.gameA],
             ),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
@@ -35,11 +35,11 @@ class FoundZoneBanner extends StatelessWidget {
                 offset: const Offset(0, 4),
               ),
             ],
-            border: Border.all(color: const Color(0xFF81C784), width: 1.5),
+            border: Border.all(color: AppColors.safeNear, width: 1.5),
           ),
           child: Row(
             children: [
-              const Icon(Icons.celebration, color: Color(0xFFFFD700), size: 32),
+              const Icon(Icons.celebration, color: AppColors.gold, size: 32),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

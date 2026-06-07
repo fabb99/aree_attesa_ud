@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'features/home/home_screen.dart';  // ← cambia questo
+import 'features/home/home_screen.dart';  
+import 'core/theme/app_colors.dart';
 
 void main() {
   runApp(const ProviderScope(child: AreeAttesaApp()));
@@ -15,7 +16,7 @@ class AreeAttesaApp extends StatelessWidget {
       title: 'Aree Attesa UD',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1B5E20)),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.safeFound),
         useMaterial3: true,
       ),
       home: const HomeScreen(),  // ← e questo

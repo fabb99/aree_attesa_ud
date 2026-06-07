@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../core/theme/app_colors.dart';
 
 abstract class GameCPhotoProvider {
   Widget buildPhotoGallery(int safeZoneId, {double? height});
@@ -198,9 +199,9 @@ class _LoadingPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         height: height,
         width: double.infinity,
-        color: const Color(0xFF1A1A2E),
+        color: AppColors.bgDark,
         child: const Center(
-          child: CircularProgressIndicator(color: Color(0xFF42A5F5)),
+          child: CircularProgressIndicator(color: AppColors.gameCLight),
         ),
       );
 }
@@ -213,7 +214,7 @@ class _Placeholder extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         height: height,
         width: double.infinity,
-        color: const Color(0xFF1A1A2E),
+        color:  AppColors.bgDark,
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -31,7 +31,7 @@ class _PreparatiCardState extends State<PreparatiCard> {
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [Color(0xFF8B0000), AppColors.alertRedDark],
+              colors: [AppColors.alertRedDeep, AppColors.alertRedDark],
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
             ),

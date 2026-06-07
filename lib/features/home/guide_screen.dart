@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 
 /// Schermata guida ai giochi — accessibile dalla Home tramite icona "?".
 /// Self-contained: nessun provider, nessuna dipendenza esterna.
@@ -30,9 +31,9 @@ class _GuideScreenState extends State<GuideScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0F0A),
+      backgroundColor:AppColors.bgDeep,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A0F0A),
+        backgroundColor: AppColors.bgDeep,
         foregroundColor: Colors.white,
         elevation: 0,
         title: const Text(
@@ -479,7 +480,7 @@ const _gameAGuide = _GuideConfig(
   title: 'Campo Fiorito',
   subtitle: 'Scopri le aree di attesa esplorando la mappa di Udine, una cella alla volta.',
   icon: Icons.grid_on_rounded,
-  accentColor: Color(0xFF4CAF50),
+  accentColor: AppColors.gameALight,
   objective:
       'Trovare il maggior numero di aree di attesa della Protezione Civile di Udine '
       'prima di esaurire le mosse disponibili. '
@@ -493,11 +494,11 @@ const _gameAGuide = _GuideConfig(
     'Premi "Fine" per terminare anticipatamente e vedere tutte le aree rimanenti.',
   ],
   legend: [
-    _LegendEntry(color: Color(0xFF1B5E20), label: 'Area di attesa trovata'),
-    _LegendEntry(color: Color(0xFF43A047), label: 'Distanza 1 — area adiacente'),
-    _LegendEntry(color: Color(0xFFFFEB3B), label: 'Distanza 2 — area vicina'),
-    _LegendEntry(color: Color(0xFFFF9800), label: 'Distanza 3 — area nella zona'),
-    _LegendEntry(color: Color(0xFFE64A19), label: 'Distanza 4+ — area lontana'),
+    _LegendEntry(color: AppColors.safeFound, label: 'Area di attesa trovata'),
+    _LegendEntry(color: AppColors.dist1, label: 'Distanza 1 — area adiacente'),
+    _LegendEntry(color: AppColors.dist2, label: 'Distanza 2 — area vicina'),
+    _LegendEntry(color: AppColors.dist3, label: 'Distanza 3 — area nella zona'),
+    _LegendEntry(color: AppColors.distFar, label: 'Distanza 4+ — area lontana'),
   ],
   scoring:
       'Ogni area trovata vale punti. Il punteggio finale è la percentuale di aree '
@@ -512,7 +513,7 @@ const _gameBGuide = _GuideConfig(
   title: 'Localizza l\'Area',
   subtitle: 'Ti viene mostrato il nome e l\'indirizzo di un\'area di attesa: trovala sulla mappa.',
   icon: Icons.my_location_rounded,
-  accentColor: Color(0xFF42A5F5),
+  accentColor: AppColors.gameBLight,
   objective:
       'Localizzare sulla mappa esagonale l\'area di attesa indicata, '
       'nel minor numero di tentativi possibile. '
@@ -526,11 +527,11 @@ const _gameBGuide = _GuideConfig(
     'Si giocano 5 round in totale, con un\'area diversa per ogni round.',
   ],
   legend: [
-    _LegendEntry(color: Color(0xFF43A047), label: 'Distanza 1 — sei vicinissimo'),
-    _LegendEntry(color: Color(0xFFFFEB3B), label: 'Distanza 2 — nella zona'),
-    _LegendEntry(color: Color(0xFFFF9800), label: 'Distanza 3 — un po\' lontano'),
-    _LegendEntry(color: Color(0xFFE64A19), label: 'Distanza 4+ — lontano'),
-    _LegendEntry(color: Color(0xFF1B5E20), label: 'Trovato! Area corretta'),
+    _LegendEntry(color:  AppColors.dist1, label: 'Distanza 1 — sei vicinissimo'),
+    _LegendEntry(color:  AppColors.dist2, label: 'Distanza 2 — nella zona'),
+    _LegendEntry(color:  AppColors.dist3, label: 'Distanza 3 — un po\' lontano'),
+    _LegendEntry(color:  AppColors.distFar, label: 'Distanza 4+ — lontano'),
+    _LegendEntry(color:  AppColors.safeFound, label: 'Trovato! Area corretta'),
   ],
   scoring:
       'Ogni round vale fino a 1000 punti. Per ogni tentativo sbagliato perdi 50 punti, '
@@ -546,7 +547,7 @@ const _gameCGuide = _GuideConfig(
   title: 'GeoGuesser',
   subtitle: 'Guarda la foto di un\'area di attesa e indovina dove si trova sulla mappa.',
   icon: Icons.photo_camera_outlined,
-  accentColor: Color(0xFF9C27B0),
+  accentColor: AppColors.gameCLight,
   objective:
       'Osservare le foto di un\'area di attesa e posizionare un pin sulla mappa '
       'nel punto più vicino possibile alla posizione reale. '

@@ -1,5 +1,7 @@
+import 'package:aree_attesa_ud/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import '../../models/hex_cell.dart';
+import '../../theme/app_colors.dart';
 
 /// Mappa lo stato di una [HexCell] ai colori di rendering.
 ///
@@ -14,13 +16,7 @@ import '../../models/hex_cell.dart';
 /// final textColor = HexCellColorMapper.textColor(cell);
 /// ```
 abstract final class HexCellColorMapper {
-  // ── Colori distanza — condivisi tra i due metodi ──────────────────────────
-
-  static const _colorSafeZone   = Color(0xFF1B5E20); // verde scuro
-  static const _colorDistance1  = Color(0xFF43A047); // verde
-  static const _colorDistance2  = Color(0xFFFFEB3B); // giallo
-  static const _colorDistance3  = Color(0xFFFF9800); // arancione
-  static const _colorDistanceFar = Color(0xFFE64A19); // rosso — distanza >= 4
+  
 
   // ── API pubblica ──────────────────────────────────────────────────────────
 
@@ -33,7 +29,7 @@ abstract final class HexCellColorMapper {
   ///   dalle altre celle rivelate).
   static Color revealedColor(HexCell cell, HexGridMode mode) {
     if (mode == HexGridMode.gameA && cell.isSafeZone) {
-      return _colorSafeZone;
+      return  AppColors.safeFound;
     }
     return _distanceColor(cell.distanceToNearest);
   }
@@ -52,10 +48,10 @@ abstract final class HexCellColorMapper {
 
   static Color _distanceColor(int? distance) {
     switch (distance) {
-      case 1:  return _colorDistance1;
-      case 2:  return _colorDistance2;
-      case 3:  return _colorDistance3;
-      default: return _colorDistanceFar;
+      case 1:  return AppColors.dist1;
+      case 2:  return AppColors.dist2;
+      case 3:  return AppColors.dist3;
+      default: return AppColors.distFar;
     }
   }
 }

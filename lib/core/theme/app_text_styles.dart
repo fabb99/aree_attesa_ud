@@ -127,8 +127,6 @@ abstract final class AppTextStyles {
 }
 
 //-----VERSIONE LIGHT
-
-
 abstract final class AppTextStylesLight {
 //abstract final class AppTextStyles {
   // ── Headings ───────────────────────────────────────────────────────────────
@@ -202,14 +200,14 @@ abstract final class AppTextStylesLight {
   );
 
   static const captionWhite = TextStyle(
-    color: AppColors.textSecondary,
+    color: AppColors.bgCard,
     fontSize: 12,
   );
 
   // ── Buttons ────────────────────────────────────────────────────────────────
 
   static const button = TextStyle(
-    color: AppColors.textPrimary,
+    color: AppColors.bgCard,
     fontSize: 15,
     fontWeight: FontWeight.bold,
   );

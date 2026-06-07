@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'dart:ui' as ui;
 import '../../models/hex_cell.dart';
 import 'hex_cell_color_mapper.dart';
+import '../../theme/app_colors.dart';
  
 class HexGridLayer extends StatelessWidget {
   final List<HexCell> cells;
@@ -131,10 +132,10 @@ class _HexGridPainter extends CustomPainter {
     List<Offset> vertices,
   ) {
     final fillPaint = Paint()
-      ..color = const Color(0xFF1B5E20).withAlpha(235)
+      ..color = AppColors.safeFound.withAlpha(235)
       ..style = PaintingStyle.fill;
     final strokePaint = Paint()
-      ..color = const Color(0xFFFFD700)
+      ..color = AppColors.gold
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.5;
  

@@ -33,7 +33,7 @@ class HomeHeader extends StatelessWidget {
                 children: [
                   Text('Aree Attesa UD', style: AppTextStyles.heading3App),
                   Text(
-                    'Protezione Civile · Udine',
+                    '',//'Protezione Civile · Udine',
                     style: AppTextStyles.caption,
                   ),
                 ],
