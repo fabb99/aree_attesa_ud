@@ -31,7 +31,7 @@ class AppEndGameDialog extends StatelessWidget {
           Text(
             'Termina partita',
             style: TextStyle(
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
