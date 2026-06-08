@@ -562,8 +562,9 @@ const _gameCGuide = _GuideConfig(
   ],
   scoring:
       'Il punteggio si calcola con una curva esponenziale basata sulla distanza: '
-      '0 metri = 5000 punti, circa 500 metri = 1800 punti, oltre 5 km = 0 punti. '
-      'Il punteggio massimo per partita è 25000 punti (5 round × 5000).',
+      '0 metri = 5000 pt · 500 m ≈ 3000 pt · 1 km ≈ 1840 pt · '
+      '3 km ≈ 220 pt · oltre 8 km = 0 pt. '
+      'Il punteggio massimo per partita è 25.000 pt.',
   tip:
       'Osserva ogni dettaglio delle foto: i nomi delle vie sulle targhe, '
       'il tipo di quartiere, la vegetazione. Anche un piccolo indizio '

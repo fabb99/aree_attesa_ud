@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/ui/app_end_game_dialog.dart';
+import '../../../core/widgets/ui/tip_banner.dart';
+import '../../../core/widgets/ui/app_tips.dart';
 import '../models/game_c_state.dart';
 import '../providers/game_c_provider.dart';
 import '../widgets/game_c_photo_phase.dart';
@@ -25,6 +27,10 @@ class _GameCScreenState extends ConsumerState<GameCScreen>
 
   late final AnimationController _slideController;
   late final Animation<Offset> _slideAnimation;
+
+  // ── Tip state ─────────────────────────────────────────────────────────────
+  AppTip? _activeTip;
+  String? _lastTipId;
 
   @override
   void initState() {
@@ -81,10 +87,18 @@ class _GameCScreenState extends ConsumerState<GameCScreen>
     final state = ref.read(gameCProvider);
     if (state.phase == GameCPhase.roundResult ||
         state.phase == GameCPhase.finished) {
+      // Mostra una tip ad ogni round, subito prima di navigare al risultato
+      _showTip();
       Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => const GameCRoundResultScreen()),
       );
     }
+  }
+
+  void _showTip() {
+    final tip = AppTips.pickRandom('gameC', excludeId: _lastTipId);
+    _lastTipId = tip.id;
+    setState(() => _activeTip = tip);
   }
 
   @override
@@ -126,6 +140,13 @@ class _GameCScreenState extends ConsumerState<GameCScreen>
                   onConfirm: _onConfirmGuess,
                   onEndGame: _onEndGameRequested,
                 ),
+              ),
+
+            // ── Tip banner ───────────────────────────────────────────
+            if (_activeTip != null)
+              TipBanner(
+                tip: _activeTip!,
+                onDismiss: () => setState(() => _activeTip = null),
               ),
           ],
         ),

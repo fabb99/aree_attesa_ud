@@ -20,78 +20,94 @@ abstract final class AppTips {
   static const List<AppTip> allTips = [
     AppTip(
       id: 'gen_1',
-      title: 'Il ruolo delle aree di attesa',
-      body:
-          'Sono piazze o spazi aperti sicuri destinati alla prima accoglienza. '
-          'Qui riceverai le prime informazioni sull\'evento e generi di conforto '
-          'in attesa delle aree di ricovero.',
+      title: 'Cos\'è un\'area di attesa?',
+      body: 'È il luogo dove la popolazione riceve le prime informazioni e generi '
+          'di conforto dopo un\'emergenza, in attesa di essere trasferita in aree di ricovero.',
     ),
     AppTip(
       id: 'gen_2',
-      title: 'Se sei in casa: durante la scossa',
-      body:
-          'Non usare le scale, l\'ascensore o i balconi. Riparati sotto tavoli, '
-          'letti o strutture portanti, tenendoti lontano da finestre, vetrate '
-          'e mobili pesanti.',
+      title: 'Dove si trovano?',
+      body: 'Piazze, parcheggi e spazi aperti lontani da edifici a rischio, '
+          'versanti instabili e impianti industriali pericolosi.',
     ),
     AppTip(
       id: 'gen_3',
-      title: 'Se sei in casa: dopo la scossa',
-      body:
-          'Aspetta la fine della scossa prima di uscire per evitare calcinacci. '
-          'Se possibile, prima di abbandonare la casa chiudi gli interruttori '
-          'di gas, acqua e corrente elettrica.',
-    ),
-    AppTip(
-      id: 'gen_4',
-      title: 'Se ti trovi all\'aperto',
-      body:
-          'Allontanati dagli edifici e raggiungi subito l\'area di attesa più vicina. '
-          'Evita assolutamente di fermarti vicino ad alberi, cornicioni, lampioni '
-          'o linee elettriche.',
-    ),
-    AppTip(
-      id: 'gen_5',
-      title: 'Non usare l\'automobile',
-      body:
-          'Durante un\'emergenza non prendere l\'auto per spostarti. È vitale '
-          'che le strade rimangano completamente libere per consentire '
-          'il passaggio dei mezzi di soccorso.',
+      title: 'Come raggiungere un area di attesa?',
+      body: 'A piedi, seguendo percorsi sicuri. Non usare l\'auto: '
+          'le strade devono restare libere per i mezzi di soccorso.',
     ),
   
-    // ── Specifiche Gioco A ────────────────────────────────────────────────────
+    // ── Gioco A ───────────────────────────────────────────────────────────────────
     AppTip(
       id: 'gameA_1',
-      title: 'Suggerimento: usa i colori',
-      body:
-          'Le celle verdi sono vicine a un\'area di attesa reale. '
-          'Nella realtà, imparare a orientarsi visivamente nel quartiere '
-          'ti aiuta a memorizzare dove si trovano questi punti di raccolta.',
+      title: 'Usa i colori come guida',
+      body: 'Verde = area adiacente, giallo = vicino, arancione = nella zona, '
+          'rosso = lontano. Concentrati sulle celle verdi!',
       gameTag: 'gameA',
     ),
 
-    // ── Specifiche Gioco B ────────────────────────────────────────────────────
+    AppTip(
+      id: 'gameA_2',
+      title: 'Guarda il numero sulla cella',
+      body: 'Il numero indica quante aree di attesa si trovano nelle celle '
+          'immediatamente adiacenti. Usalo per mirare meglio.',
+      gameTag: 'gameA',
+    ),
+
+    AppTip(
+      id: 'gameA_3',
+      title: 'Cerca i parchi e parcheggi',
+      body:' Le aree di attesa sono spesso in spazi aperti come parchi e parcheggi. '
+          'Zoomando sulla mappa puoi riconoscerli e mirare lì.',
+      gameTag: 'gameA',
+    ),
+
+    // ── Gioco B ───────────────────────────────────────────────────────────────────
     AppTip(
       id: 'gameB_1',
-      title: 'Impara gli indirizzi',
-      body:
-          'Memorizzare il nome e l\'indirizzo di almeno un\'area di attesa '
-          'vicino a casa o al lavoro è una delle azioni più utili '
-          'che puoi fare per la tua sicurezza.',
+      title: 'La distanza è la tua bussola',
+      body: 'Ogni tap sbagliato mostra quante celle ti separano dalla risposta. '
+          'Usala per restringere la zona di ricerca.',
+      gameTag: 'gameB',
+    ),
+    AppTip(
+      id: 'gameB_2',
+      title: 'Ricorda i tap precedenti',
+      body: 'Le celle già rivelate restano visibili. Incrociando le distanze '
+          'di due tap sbagliati puoi triangolare la posizione esatta.',
       gameTag: 'gameB',
     ),
 
-    // ── Specifiche Gioco C ────────────────────────────────────────────────────
+    // ── Gioco C ───────────────────────────────────────────────────────────────────
     AppTip(
       id: 'gameC_1',
-      title: 'Riconosci i luoghi familiari',
-      body:
-          'Le foto ti mostrano i luoghi come li vedresti camminando. '
-          'Familiarizzare visivamente con le aree di attesa ti permette '
-          'di riconoscerle e raggiungerle anche sotto stress.',
+      title: 'Durante la scossa: se sei in casa',
+      body: 'Riparati sotto un tavolo o una struttura portante. '
+          'Allontanati da finestre e mobili pesanti. Non uscire finché non finisce.',
       gameTag: 'gameC',
     ),
-  ];
+    AppTip(
+      id: 'gameC_2',
+      title: 'Durante la scossa: se sei fuori',
+      body: 'Allontanati dagli edifici e cerca uno spazio aperto. '
+          'Evita alberi, cornicioni, lampioni e linee elettriche.',
+      gameTag: 'gameC',
+    ),
+    AppTip(
+      id: 'gameC_3',
+      title: 'Dopo la scossa: prima di uscire',
+      body: 'Chiudi gas, acqua e corrente elettrica. '
+          'Usa le scale, mai l\'ascensore, e raggiungi l\'area di attesa a piedi.',
+      gameTag: 'gameC',
+    ),
+    AppTip(
+      id: 'gameC_4',
+      title: 'Non usare l\'auto',
+      body: 'Le strade devono restare libere per i mezzi di soccorso. '
+          'Raggiungi sempre l\'area di attesa a piedi.',
+      gameTag: 'gameC',
+    ),
+    ];
 
   /// Tips applicabili a [gameTag]: tutte le generali + quelle specifiche.
   static List<AppTip> forGame(String gameTag) => allTips

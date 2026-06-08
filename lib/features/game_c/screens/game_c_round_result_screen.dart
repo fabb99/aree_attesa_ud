@@ -5,40 +5,33 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/ui/app_stat_chip.dart';
 import '../../../core/widgets/ui/app_score_ring.dart';
-import '../../../core/widgets/ui/app_tips.dart';            // ← nuovo
 import '../models/game_c_state.dart';
 import '../providers/game_c_provider.dart';
 import '../services/game_c_service.dart';
 import 'game_c_result_screen.dart';
-
+ 
 class GameCRoundResultScreen extends ConsumerStatefulWidget {
   const GameCRoundResultScreen({super.key});
-
+ 
   @override
   ConsumerState<GameCRoundResultScreen> createState() =>
       _GameCRoundResultScreenState();
 }
-
+ 
 class _GameCRoundResultScreenState
     extends ConsumerState<GameCRoundResultScreen>
     with SingleTickerProviderStateMixin {
   final MapController _mapController = MapController();
-
+ 
   late final AnimationController _scoreAnimController;
   late final Animation<int> _scoreAnim;
-
-  // ── Tip selezionata per questo round (fissa per tutta la permanenza) ───────
-  late final AppTip _roundTip;
-
+ 
   @override
   void initState() {
     super.initState();
-
+ 
     final lastRound = ref.read(gameCProvider).completedRounds.last;
-
-    // Seleziona una tip casuale una volta sola, al montaggio della schermata
-    _roundTip = AppTips.pickRandom('gameC');
-
+ 
     _scoreAnimController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
@@ -50,10 +43,10 @@ class _GameCRoundResultScreenState
       ),
     );
     _scoreAnimController.forward();
-
+ 
     WidgetsBinding.instance.addPostFrameCallback((_) => _fitBounds());
   }
-
+ 
   void _fitBounds() {
     final last = ref.read(gameCProvider).completedRounds.last;
     _mapController.fitCamera(
@@ -62,11 +55,11 @@ class _GameCRoundResultScreenState
           last.guessPosition,
           last.targetZone.position,
         ]),
-        padding: const EdgeInsets.fromLTRB(60, 120, 60, 380), // più spazio per la tip
+        padding: const EdgeInsets.fromLTRB(60, 120, 60, 320),
       ),
     );
   }
-
+ 
   void _onNext() {
     final state = ref.read(gameCProvider);
     if (state.phase == GameCPhase.finished) {
@@ -79,14 +72,14 @@ class _GameCRoundResultScreenState
       Navigator.of(context).pop();
     }
   }
-
+ 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(gameCProvider);
     final last = state.completedRounds.last;
     final isLast = state.phase == GameCPhase.finished;
     final service = ref.read(gameCProvider.notifier).service;
-
+ 
     return PopScope(
       canPop: false,
       child: Scaffold(
@@ -146,7 +139,7 @@ class _GameCRoundResultScreenState
                 ),
               ],
             ),
-
+ 
             // ── Pannello risultato ────────────────────────────────────
             Positioned(
               bottom: 0,
@@ -158,7 +151,6 @@ class _GameCRoundResultScreenState
                 scoreAnim: _scoreAnim,
                 isLast: isLast,
                 service: service,
-                tip: _roundTip,           // ← passata al pannello
                 onNext: _onNext,
               ),
             ),
@@ -167,7 +159,7 @@ class _GameCRoundResultScreenState
       ),
     );
   }
-
+ 
   @override
   void dispose() {
     _scoreAnimController.dispose();
@@ -175,15 +167,15 @@ class _GameCRoundResultScreenState
     super.dispose();
   }
 }
-
+ 
 // ── Pin personalizzato ────────────────────────────────────────────────────────
-
+ 
 class _PinWidget extends StatelessWidget {
   final Color color;
   final String label;
-
+ 
   const _PinWidget({required this.color, required this.label});
-
+ 
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -220,34 +212,32 @@ class _PinWidget extends StatelessWidget {
     );
   }
 }
-
+ 
 // ── Pannello risultato ────────────────────────────────────────────────────────
-
+ 
 class _ResultPanel extends StatelessWidget {
   final GameCState state;
   final GameCRoundResult last;
   final Animation<int> scoreAnim;
   final bool isLast;
   final GameCService service;
-  final AppTip tip;                        // ← nuovo
   final VoidCallback onNext;
-
+ 
   const _ResultPanel({
     required this.state,
     required this.last,
     required this.scoreAnim,
     required this.isLast,
     required this.service,
-    required this.tip,
     required this.onNext,
   });
-
+ 
   @override
   Widget build(BuildContext context) {
     final scoreColor = AppScoreRing.colorFor(last.score, 5000);
     final distLabel = service.formatDistance(last.distanceMeters);
     final label = service.scoreLabel(last.score);
-
+ 
     return Container(
       padding: EdgeInsets.fromLTRB(
         24, 20, 24,
@@ -306,89 +296,29 @@ class _ResultPanel extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
-
-          // ── Tip card ─────────────────────────────────────────────
-          _TipCard(tip: tip),
-          const SizedBox(height: 14),
-
+          const SizedBox(height: 20),
           _NextButton(isLast: isLast, onNext: onNext),
         ],
       ),
     );
   }
 }
-
-// ── Tip card inline (Game C) ──────────────────────────────────────────────────
-
-class _TipCard extends StatelessWidget {
-  final AppTip tip;
-
-  const _TipCard({required this.tip});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-      decoration: BoxDecoration(
-        color: AppColors.primary.withAlpha(20),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.primary.withAlpha(70)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.lightbulb_outline_rounded,
-            color: AppColors.primaryLight,
-            size: 16,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  tip.title,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primaryLight,
-                    fontSize: 12,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  tip.body,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    fontSize: 12,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
+ 
 // ── Header risultato ──────────────────────────────────────────────────────────
-
+ 
 class _ResultHeader extends StatelessWidget {
   final String label;
   final Color scoreColor;
   final int currentRound;
   final int totalRounds;
-
+ 
   const _ResultHeader({
     required this.label,
     required this.scoreColor,
     required this.currentRound,
     required this.totalRounds,
   });
-
+ 
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -415,15 +345,15 @@ class _ResultHeader extends StatelessWidget {
     );
   }
 }
-
+ 
 // ── Box info area ─────────────────────────────────────────────────────────────
-
+ 
 class _AreaInfoBox extends StatelessWidget {
   final String name;
   final String address;
-
+ 
   const _AreaInfoBox({required this.name, required this.address});
-
+ 
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -450,15 +380,15 @@ class _AreaInfoBox extends StatelessWidget {
     );
   }
 }
-
+ 
 // ── Bottone avanti ────────────────────────────────────────────────────────────
-
+ 
 class _NextButton extends StatelessWidget {
   final bool isLast;
   final VoidCallback onNext;
-
+ 
   const _NextButton({required this.isLast, required this.onNext});
-
+ 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -482,9 +412,9 @@ class _NextButton extends StatelessWidget {
     );
   }
 }
-
+ 
 // ── Costanti locali ───────────────────────────────────────────────────────────
-
+ 
 class AppConstants {
   static const defaultZoom = 13.5;
 }
