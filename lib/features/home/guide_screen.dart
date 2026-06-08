@@ -34,7 +34,7 @@ class _GuideScreenState extends State<GuideScreen>
       backgroundColor:AppColors.bgDeep,
       appBar: AppBar(
         backgroundColor: AppColors.bgDeep,
-        foregroundColor: Colors.white,
+        foregroundColor: AppColors.textSecondary,
         elevation: 0,
         title: const Text(
           'Come si gioca',
@@ -46,10 +46,10 @@ class _GuideScreenState extends State<GuideScreen>
         ),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.white,
+          indicatorColor: AppColors.textPrimary,
           indicatorWeight: 2,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white38,
+          labelColor: AppColors.textPrimary,
+          unselectedLabelColor: AppColors.textSecondary,
           labelStyle: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w700,
@@ -204,7 +204,7 @@ class _GameHeader extends StatelessWidget {
               Text(
                 config.title,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppColors.textPrimary,
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
                   height: 1.15,
@@ -214,7 +214,7 @@ class _GameHeader extends StatelessWidget {
               Text(
                 config.subtitle,
                 style: const TextStyle(
-                  color: Colors.white54,
+                  color: AppColors.textSecondary,
                   fontSize: 13,
                   height: 1.4,
                 ),
@@ -331,7 +331,7 @@ class _StepRow extends StatelessWidget {
               child: Text(
                 text,
                 style: const TextStyle(
-                  color: Colors.white70,
+                  color: AppColors.textPrimary,
                   fontSize: 14,
                   height: 1.5,
                 ),
@@ -369,7 +369,7 @@ class _LegendRow extends StatelessWidget {
             child: Text(
               entry.label,
               style: const TextStyle(
-                color: Colors.white70,
+                color: AppColors.textPrimary,
                 fontSize: 14,
                 height: 1.4,
               ),
@@ -392,7 +392,7 @@ class _ParagraphText extends StatelessWidget {
     return Text(
       text,
       style: const TextStyle(
-        color: Colors.white70,
+        color: AppColors.textPrimary,
         fontSize: 14,
         height: 1.6,
       ),
