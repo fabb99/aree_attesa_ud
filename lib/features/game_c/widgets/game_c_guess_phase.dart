@@ -74,7 +74,12 @@ class GameCGuessPhase extends StatelessWidget {
         ),
 
         // ── HUD ────────────────────────────────────────────────────
-        GameCHud(state: state, onEndGame: onEndGame),
+        Positioned(
+          top: 0, 
+          left: 0, 
+          right: 0, 
+          child: GameCHud(state: state, onEndGame: onEndGame)
+          ),
 
         // ── Istruzione tap ──────────────────────────────────────────
         if (!hasGuess)
