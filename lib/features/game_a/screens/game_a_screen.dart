@@ -101,7 +101,7 @@ class _GameAScreenState extends ConsumerState<GameAScreen> {
 
             // ── Griglia esagonale ────────────────────────────────────
             if (_currentCamera != null &&
-                gameState.phase != GameAPhase.loading)
+                gameState.phase == GameAPhase.playing)
               IgnorePointer(
                 child: HexGridLayer(
                   cells: gameState.cells,
