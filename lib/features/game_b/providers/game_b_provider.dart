@@ -7,10 +7,6 @@ import '../config/game_b_config.dart';
 import '../models/game_b_state.dart';
 import '../services/game_b_service.dart';
 
-// ─── Repository providers ────────────────────────────────────────────────────
-//
-// RIMOSSI da qui: vivono esclusivamente in core/app_providers.dart.
-// Re-export per retrocompatibilità con le screen che li importano da questo file.
 export '../../../../core/app_providers.dart'
     show gridRepositoryProvider, safeZoneRepositoryProvider;
 
@@ -20,25 +16,27 @@ class GameBNotifier extends StateNotifier<GameBState> {
   GameBNotifier() : super(GameBState.initial());
 
   final GameBService _service = GameBService();
-
-  /// Lista dei target pre-estratti per tutta la partita.
-  /// Privata: la UI non deve accedervi direttamente.
   List<_RoundTarget> _roundTargets = [];
 
-  /// Inizializza la partita caricando griglia, safe zone e target dei round.
+  /// Contatore wrongTap cumulativi dall'ultima tip mostrata.
+  /// Vive nel notifier (non nello state) perché è logica interna,
+  /// non serve alla UI per renderizzare nulla.
+  int _wrongTapsSinceLastTip = 0;
+
   Future<void> initGame({
     required GridRepository gridRepo,
     required SafeZoneRepository szRepo,
   }) async {
     state = GameBState.initial();
+    _wrongTapsSinceLastTip = 0;
 
     try {
       final rawCells = await gridRepo.loadGrid();
       final safeZones = await szRepo.loadSafeZones(rawCells);
       final cells = _service.initializeCells(rawCells, safeZones);
 
-      // Pre-estrae i target per tutti i round in modo casuale senza ripetizioni
-      final targets = _service.pickRoundTargets(safeZones, GameBConfig.roundsPerGame);
+      final targets =
+          _service.pickRoundTargets(safeZones, GameBConfig.roundsPerGame);
       _roundTargets = targets
           .map((sz) => _RoundTarget(safeZone: sz, cellId: sz.cellId))
           .toList();
@@ -61,12 +59,11 @@ class GameBNotifier extends StateNotifier<GameBState> {
     }
   }
 
-  /// Gestisce il tap su una cella della griglia.
+  /// Gestisce il tap su una cella.
   ///
-  /// Tap corretto → salva il round e passa a [GameBPhase.roundResult].
-  /// Tap sbagliato → rivela la cella con la distanza dal target.
-  void tapCell(int cellId) {
-    if (state.phase != GameBPhase.playing) return;
+  /// Restituisce `true` se va mostrata una tip dopo questo tap.
+  bool tapCell(int cellId) {
+    if (state.phase != GameBPhase.playing) return false;
 
     final targetCellId = _roundTargets[state.currentRound].cellId;
 
@@ -75,6 +72,8 @@ class GameBNotifier extends StateNotifier<GameBState> {
       tappedCellId: cellId,
       targetCellId: targetCellId,
     );
+
+    bool shouldShowTip = false;
 
     if (result.isCorrect) {
       final roundScore = _service.calculateRoundScore(state.wrongTaps);
@@ -93,7 +92,16 @@ class GameBNotifier extends StateNotifier<GameBState> {
         phase: isLastRound ? GameBPhase.finished : GameBPhase.roundResult,
       );
     } else {
-      // Tap sbagliato: aggiorna celle e incrementa i tentativi
+      // ── Logica tip ──────────────────────────────────────────────────────────
+      // wrongTaps è per-round (resettato a 0 ogni nextRound).
+      // _wrongTapsSinceLastTip è cumulativo su tutta la partita.
+      _wrongTapsSinceLastTip += 1;
+      if (_wrongTapsSinceLastTip >= GameBConfig.wrongTapsPerTip) {
+        shouldShowTip = true;
+        _wrongTapsSinceLastTip = 0; // reset
+      }
+      // ───────────────────────────────────────────────────────────────────────
+
       final newWrongTaps = state.wrongTaps + 1;
       final newRoundScore = _service.calculateRoundScore(newWrongTaps);
 
@@ -103,9 +111,10 @@ class GameBNotifier extends StateNotifier<GameBState> {
         currentRoundScore: newRoundScore,
       );
     }
+
+    return shouldShowTip;
   }
 
-  /// Avanza al round successivo dopo la schermata di risultato intermedio.
   void nextRound() {
     if (state.phase != GameBPhase.roundResult) return;
 
@@ -122,7 +131,6 @@ class GameBNotifier extends StateNotifier<GameBState> {
     );
   }
 
-  /// Restituisce l'id della cella che contiene [point], o null se fuori griglia.
   int? findCellAtPoint(LatLng point) {
     for (final cell in state.cells) {
       if (cell.containsPoint(point)) return cell.id;
@@ -138,8 +146,6 @@ class GameBNotifier extends StateNotifier<GameBState> {
 
 // ─── Struttura interna ────────────────────────────────────────────────────────
 
-/// Associa una [SafeZone] al suo [cellId] per uso interno al notifier.
-/// Non esposta all'esterno del file.
 class _RoundTarget {
   final SafeZone safeZone;
   final int cellId;

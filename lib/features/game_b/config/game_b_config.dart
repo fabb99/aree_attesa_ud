@@ -10,4 +10,6 @@ class GameBConfig {
 
   /// Punteggio minimo per round (anche dopo molti tap sbagliati)
   static const int minScorePerRound = 200;
+
+  static const int wrongTapsPerTip = 5;
 }

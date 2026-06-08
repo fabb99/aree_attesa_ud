@@ -7,6 +7,8 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/map/hex_grid_layer.dart';
 import '../../../core/widgets/ui/app_end_game_dialog.dart';
+import '../../../core/widgets/ui/tip_banner.dart';         // ← nuovo
+import '../../../core/widgets/ui/app_tips.dart';            // ← nuovo
 import '../models/game_b_state.dart';
 import '../providers/game_b_provider.dart';
 import '../widgets/game_b_hud.dart';
@@ -25,6 +27,10 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
   final MapController _mapController = MapController();
   MapCamera? _currentCamera;
   int? _lastWrongDistance;
+
+  // ── Tip state ─────────────────────────────────────────────────────────────
+  AppTip? _activeTip;
+  String? _lastTipId;
 
   @override
   void initState() {
@@ -63,7 +69,9 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
     if (cellId == null) return;
 
     final wrongTapsBefore = state.wrongTaps;
-    notifier.tapCell(cellId);
+
+    // tapCell ora restituisce bool: true = mostra tip
+    final shouldShowTip = notifier.tapCell(cellId);
 
     final newState = ref.read(gameBProvider);
 
@@ -72,7 +80,10 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
         (c) => c.id == cellId,
         orElse: () => newState.cells.first,
       );
-      setState(() => _lastWrongDistance = tappedCell.distanceToNearest);
+      setState(() {
+        _lastWrongDistance = tappedCell.distanceToNearest;
+        if (shouldShowTip) _showTip();
+      });
     }
 
     if (newState.phase == GameBPhase.roundResult ||
@@ -82,6 +93,12 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
         MaterialPageRoute(builder: (_) => const GameBRoundResultScreen()),
       );
     }
+  }
+
+  void _showTip() {
+    final tip = AppTips.pickRandom('gameB', excludeId: _lastTipId);
+    _lastTipId = tip.id;
+    _activeTip = tip; // già dentro setState nel chiamante
   }
 
   @override
@@ -122,8 +139,7 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
             ),
 
             // ── Griglia esagonale ────────────────────────────────────
-            if (_currentCamera != null &&
-                state.phase == GameBPhase.playing)
+            if (_currentCamera != null && state.phase == GameBPhase.playing)
               IgnorePointer(
                 child: HexGridLayer(
                   cells: state.cells,
@@ -140,11 +156,17 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
               ),
 
             // ── Pannello target ───────────────────────────────────────
-            if (state.phase == GameBPhase.playing &&
-                state.targetZone != null)
+            if (state.phase == GameBPhase.playing && state.targetZone != null)
               GameBTargetPanel(
                 state: state,
                 lastWrongDistance: _lastWrongDistance,
+              ),
+
+            // ── Tip banner ───────────────────────────────────────────
+            if (_activeTip != null)
+              TipBanner(
+                tip: _activeTip!,
+                onDismiss: () => setState(() => _activeTip = null),
               ),
 
             // ── Loading ───────────────────────────────────────────────

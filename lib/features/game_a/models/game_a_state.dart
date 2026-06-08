@@ -14,6 +14,14 @@ class GameAState {
   final String? lastFoundName;
   final String? lastFoundAddress;
 
+  /// Contatore mosse sbagliate dall'ultima tip mostrata.
+  /// Resettato a 0 ogni volta che viene mostrata una tip.
+  final int wrongTapsSinceLastTip;
+
+  /// Flag alzato dal notifier quando la soglia è raggiunta.
+  /// La screen lo legge, mostra la tip e chiama [clearShowTip].
+  final bool showTip;
+
   const GameAState({
     required this.cells,
     required this.safeZones,
@@ -24,6 +32,8 @@ class GameAState {
     this.phase = GameAPhase.loading,
     this.lastFoundName,
     this.lastFoundAddress,
+    this.wrongTapsSinceLastTip = 0,
+    this.showTip = false,
   });
 
   GameAState copyWith({
@@ -37,6 +47,8 @@ class GameAState {
     String? lastFoundName,
     String? lastFoundAddress,
     bool clearLastFound = false,
+    int? wrongTapsSinceLastTip,
+    bool? showTip,
   }) {
     return GameAState(
       cells: cells ?? this.cells,
@@ -46,9 +58,13 @@ class GameAState {
       foundSafeZones: foundSafeZones ?? this.foundSafeZones,
       totalSafeZones: totalSafeZones ?? this.totalSafeZones,
       phase: phase ?? this.phase,
-      lastFoundName: clearLastFound ? null : (lastFoundName ?? this.lastFoundName),
+      lastFoundName:
+          clearLastFound ? null : (lastFoundName ?? this.lastFoundName),
       lastFoundAddress:
           clearLastFound ? null : (lastFoundAddress ?? this.lastFoundAddress),
+      wrongTapsSinceLastTip:
+          wrongTapsSinceLastTip ?? this.wrongTapsSinceLastTip,
+      showTip: showTip ?? this.showTip,
     );
   }
 
@@ -67,5 +83,7 @@ class GameAState {
         foundSafeZones: 0,
         totalSafeZones: 0,
         phase: GameAPhase.loading,
+        wrongTapsSinceLastTip: 0,
+        showTip: false,
       );
 }

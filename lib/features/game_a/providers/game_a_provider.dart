@@ -7,10 +7,6 @@ import '../models/game_a_state.dart';
 import '../../../core/models/hex_cell.dart';
 import '../services/game_a_service.dart';
 
-// ─── Repository providers ────────────────────────────────────────────────────
-//
-// Definiti in core/app_providers.dart — re-export per retrocompatibilità
-// con le screen che li importano da questo file.
 export '../../../core/app_providers.dart'
     show gridRepositoryProvider, safeZoneRepositoryProvider;
 
@@ -21,7 +17,6 @@ class GameANotifier extends StateNotifier<GameAState> {
 
   GameAService? _service;
 
-  /// Inizializza la partita caricando griglia e safe zone dai repository.
   Future<void> initGame({
     required GridRepository gridRepo,
     required SafeZoneRepository szRepo,
@@ -29,20 +24,20 @@ class GameANotifier extends StateNotifier<GameAState> {
     state = GameAState.initial();
 
     try {
-      final rawCells  = await gridRepo.loadGrid();
+      final rawCells = await gridRepo.loadGrid();
       final safeZones = await szRepo.loadSafeZones(rawCells);
 
       _service = GameAService();
       final cells = _service!.initializeCells(rawCells, safeZones);
 
       state = GameAState(
-        cells:          cells,
-        safeZones:      safeZones,
-        movesLeft:      GameAConfig.movesPerGame,
-        totalMoves:     GameAConfig.movesPerGame,
+        cells: cells,
+        safeZones: safeZones,
+        movesLeft: GameAConfig.movesPerGame,
+        totalMoves: GameAConfig.movesPerGame,
         foundSafeZones: 0,
         totalSafeZones: safeZones.length,
-        phase:          GameAPhase.playing,
+        phase: GameAPhase.playing,
       );
     } catch (e, stack) {
       // ignore: avoid_print
@@ -51,12 +46,6 @@ class GameANotifier extends StateNotifier<GameAState> {
     }
   }
 
-  /// Gestisce il tap su una cella della griglia.
-  ///
-  /// Tutta la logica di business (mosse, conteggio, reveal finale) è delegata
-  /// a [GameAService.tapCell] — il notifier si limita ad aggiornare lo state.
-  /// Se il gioco è già terminato, permette solo di riaprire il banner
-  /// informativo sulle safe zone già visibili.
   void tapCell(int cellId) {
     final cell = state.cells.firstWhere(
       (c) => c.id == cellId,
@@ -67,7 +56,7 @@ class GameANotifier extends StateNotifier<GameAState> {
     if (state.phase != GameAPhase.playing) {
       if (cell.isSafeZone) {
         state = state.copyWith(
-          lastFoundName:    cell.safeZoneName,
+          lastFoundName: cell.safeZoneName,
           lastFoundAddress: cell.safeZoneAddress,
         );
       }
@@ -75,26 +64,53 @@ class GameANotifier extends StateNotifier<GameAState> {
     }
 
     final result = _service!.tapCell(
-      cells:          state.cells,
-      cellId:         cellId,
-      movesLeft:      state.movesLeft,
+      cells: state.cells,
+      cellId: cellId,
+      movesLeft: state.movesLeft,
       foundSafeZones: state.foundSafeZones,
     );
 
+    // ── Logica tip ────────────────────────────────────────────────────────────
+    // Una mossa "sbagliata" è un tap su cella normale (non safe zone) che
+    // produce un cambiamento di stato (non un no-op su cella già rivelata).
+    // result.foundSafeZone == false E result.movesLeft < state.movesLeft
+    // significa che è stata consumata una mossa su cella normale.
+    final isWrongTap = !result.foundSafeZone &&
+        result.movesLeft < state.movesLeft; // mossa consumata, non safe zone
+
+    int newWrongTaps = state.wrongTapsSinceLastTip;
+    bool shouldShowTip = false;
+
+    if (isWrongTap) {
+      newWrongTaps += 1;
+      if (newWrongTaps >= GameAConfig.wrongTapsPerTip) {
+        shouldShowTip = true;
+        newWrongTaps = 0; // reset contatore
+      }
+    } else if (result.foundSafeZone) {
+      // Trovata una safe zone: reset del contatore (le mosse "buone" non
+      // devono accumulare verso la prossima tip — logica "non consecutive")
+      newWrongTaps = 0;
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     state = state.copyWith(
-      cells:            result.cells,
-      movesLeft:        result.movesLeft,
-      foundSafeZones:   result.foundSafeZones,
-      phase:            result.isFinished ? GameAPhase.finished : GameAPhase.playing,
-      lastFoundName:    result.foundSafeZone ? cell.safeZoneName    : null,
+      cells: result.cells,
+      movesLeft: result.movesLeft,
+      foundSafeZones: result.foundSafeZones,
+      phase: result.isFinished ? GameAPhase.finished : GameAPhase.playing,
+      lastFoundName: result.foundSafeZone ? cell.safeZoneName : null,
       lastFoundAddress: result.foundSafeZone ? cell.safeZoneAddress : null,
+      wrongTapsSinceLastTip: newWrongTaps,
+      showTip: shouldShowTip,
     );
   }
 
-  /// Termina la partita anticipatamente su richiesta dell'utente.
-  ///
-  /// Rivela tutte le safe zone ancora nascoste, esattamente come
-  /// avviene quando le mosse si esauriscono naturalmente.
+  /// Chiamato dalla screen dopo aver mostrato la tip, per abbassare il flag.
+  void clearShowTip() {
+    state = state.copyWith(showTip: false);
+  }
+
   void endGame() {
     if (state.phase != GameAPhase.playing) return;
 
@@ -106,18 +122,16 @@ class GameANotifier extends StateNotifier<GameAState> {
     }).toList();
 
     state = state.copyWith(
-      cells:          finalCells,
-      phase:          GameAPhase.finished,
+      cells: finalCells,
+      phase: GameAPhase.finished,
       clearLastFound: true,
     );
   }
 
-  /// Nasconde il banner dell'ultima safe zone trovata.
   void clearLastFound() {
     state = state.copyWith(clearLastFound: true);
   }
 
-  /// Restituisce l'id della cella che contiene [point], o null se fuori griglia.
   int? findCellAtPoint(LatLng point) {
     for (final cell in state.cells) {
       if (cell.containsPoint(point)) return cell.id;

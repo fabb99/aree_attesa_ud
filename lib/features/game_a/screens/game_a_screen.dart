@@ -7,6 +7,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/ui/app_end_game_dialog.dart';
 import '../../../core/widgets/map/hex_grid_layer.dart';
 import '../../../core/widgets/ui/found_zone_banner.dart';
+import '../../../core/widgets/ui/tip_banner.dart';        // ← nuovo
+import '../../../core/widgets/ui/app_tips.dart';           // ← nuovo
 import '../models/game_a_state.dart';
 import '../providers/game_a_provider.dart';
 import '../widgets/game_a_hud.dart';
@@ -22,6 +24,10 @@ class GameAScreen extends ConsumerStatefulWidget {
 class _GameAScreenState extends ConsumerState<GameAScreen> {
   final MapController _mapController = MapController();
   MapCamera? _currentCamera;
+
+  // ── Tip state (locale alla screen, non serve nel provider) ────────────────
+  AppTip? _activeTip;
+  String? _lastTipId; // per non ripetere la stessa tip due volte di fila
 
   @override
   void initState() {
@@ -52,9 +58,22 @@ class _GameAScreenState extends ConsumerState<GameAScreen> {
     final cellId = notifier.findCellAtPoint(latLng);
     if (cellId != null) notifier.tapCell(cellId);
 
-    if (ref.read(gameAProvider).phase == GameAPhase.finished) {
+    // Controlla se il notifier ha alzato il flag showTip
+    final newState = ref.read(gameAProvider);
+    if (newState.showTip) {
+      _showTip();
+      notifier.clearShowTip();
+    }
+
+    if (newState.phase == GameAPhase.finished) {
       _navigateToResults();
     }
+  }
+
+  void _showTip() {
+    final tip = AppTips.pickRandom('gameA', excludeId: _lastTipId);
+    _lastTipId = tip.id;
+    setState(() => _activeTip = tip);
   }
 
   void _navigateToResults() {
@@ -123,6 +142,13 @@ class _GameAScreenState extends ConsumerState<GameAScreen> {
                 address: gameState.lastFoundAddress ?? '',
                 onDismiss: () =>
                     ref.read(gameAProvider.notifier).clearLastFound(),
+              ),
+
+            // ── Tip banner ───────────────────────────────────────────
+            if (_activeTip != null)
+              TipBanner(
+                tip: _activeTip!,
+                onDismiss: () => setState(() => _activeTip = null),
               ),
 
             // ── Loading ───────────────────────────────────────────────
