@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 24),
               PreparatiCard(onTap: () => _openOnboarding()),
               const SizedBox(height: 32),
-              Text('SCEGLI LA MODALITÀ', style: AppTextStyles.labelAccent),
+              const Text('SCEGLI LA MODALITÀ', style: AppTextStyles.labelAccent),
               const SizedBox(height: 16),
               SizedBox(
                 height: 260,

@@ -60,5 +60,5 @@ abstract final class AppColors{
   static const dialogBackground  = Color(0xFFFFFFFF);
 
   /// Bordo dialog termina — più scuro per visibilità su bianco
-  static const dialogBorderEnd   = Color(0xFF2E7D32);
+  static const dialogBorderEnd   = Color(0xFFC62828);
 }

@@ -69,8 +69,6 @@ class FoundZoneBanner extends StatelessWidget {
                         color: Colors.white70,
                         fontSize: 12,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),

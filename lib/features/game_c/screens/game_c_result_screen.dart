@@ -6,7 +6,6 @@ import '../../../core/widgets/ui/app_result_actions.dart';
 import '../../../core/widgets/ui/app_score_ring.dart';
 import '../models/game_c_state.dart';
 import '../providers/game_c_provider.dart';
-import '../services/game_c_service.dart';
 import 'game_c_screen.dart';
 
 class GameCResultScreen extends ConsumerWidget {

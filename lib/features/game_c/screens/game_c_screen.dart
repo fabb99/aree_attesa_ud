@@ -6,7 +6,6 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/ui/app_end_game_dialog.dart';
 import '../models/game_c_state.dart';
 import '../providers/game_c_provider.dart';
-import '../photo/game_c_photo_provider.dart';
 import '../widgets/game_c_photo_phase.dart';
 import '../widgets/game_c_guess_phase.dart';
 import 'game_c_round_result_screen.dart';

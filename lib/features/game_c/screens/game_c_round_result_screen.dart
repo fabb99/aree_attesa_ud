@@ -367,7 +367,7 @@ class _AreaInfoBox extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('AREA DI ATTESA', style: AppTextStyles.label),
+          const Text('AREA DI ATTESA', style: AppTextStyles.label),
           const SizedBox(height: 4),
           Text(
             name,

@@ -114,7 +114,9 @@ class GameCNotifier extends StateNotifier<GameCState> {
 
   void endGame() {
     if (state.phase != GameCPhase.guessing &&
-        state.phase != GameCPhase.showPhoto) return;
+        state.phase != GameCPhase.showPhoto) {
+          return;
+          }
     state = state.copyWith(phase: GameCPhase.finished);
   }
 

@@ -27,7 +27,7 @@ class HomeHeader extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Expanded(
+            const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -42,9 +42,9 @@ class HomeHeader extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 20),
-        Text('Impara a conoscere\nla tua città', style: AppTextStyles.heading1),
+        const Text('Impara a conoscere\nla tua città', style: AppTextStyles.heading1),
         const SizedBox(height: 8),
-        Text(
+        const Text(
           'Tre giochi per esplorare le aree di attesa\n'
           'della Protezione Civile di Udine.',
           style: AppTextStyles.body,

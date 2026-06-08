@@ -61,5 +61,5 @@ abstract final class AppColors {
   static const dialogBackground  = Color(0xFF111827);
 
   /// Bordo dialog termina
-  static const dialogBorderEnd   = Color(0xFF2E7D32);
+  static const dialogBorderEnd   = Color(0xFFC62828);
 }
