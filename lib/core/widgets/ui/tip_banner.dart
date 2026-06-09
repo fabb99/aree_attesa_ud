@@ -17,17 +17,19 @@ import 'app_tips.dart';
 class TipBanner extends StatelessWidget {
   final AppTip tip;
   final VoidCallback onDismiss;
+  final double topOffset;
 
   const TipBanner({
     super.key,
     required this.tip,
     required this.onDismiss,
+    this.topOffset = 80,
   });
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: MediaQuery.of(context).padding.top + 80,
+      top: MediaQuery.of(context).padding.top + topOffset,
       left: 16,
       right: 16,
       child: Material(

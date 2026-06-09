@@ -5,48 +5,53 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/ui/app_stat_chip.dart';
 import '../../../core/widgets/ui/app_score_ring.dart';
+import '../../../core/widgets/ui/tip_banner.dart';   // ← nuovo
+import '../../../core/widgets/ui/app_tips.dart';      // ← nuovo
 import '../models/game_c_state.dart';
 import '../providers/game_c_provider.dart';
 import '../services/game_c_service.dart';
 import 'game_c_result_screen.dart';
- 
+
 class GameCRoundResultScreen extends ConsumerStatefulWidget {
   const GameCRoundResultScreen({super.key});
- 
+
   @override
   ConsumerState<GameCRoundResultScreen> createState() =>
       _GameCRoundResultScreenState();
 }
- 
+
 class _GameCRoundResultScreenState
     extends ConsumerState<GameCRoundResultScreen>
     with SingleTickerProviderStateMixin {
   final MapController _mapController = MapController();
- 
+
   late final AnimationController _scoreAnimController;
   late final Animation<int> _scoreAnim;
- 
+
+  // ── Tip: selezionata una volta al montaggio, dismissibile ─────────────────
+  late AppTip? _activeTip;
+
   @override
   void initState() {
     super.initState();
- 
+
     final lastRound = ref.read(gameCProvider).completedRounds.last;
- 
+
+    // Seleziona una tip casuale una volta sola per questo round
+    _activeTip = AppTips.pickRandom('gameC');
+
     _scoreAnimController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
     _scoreAnim = IntTween(begin: 0, end: lastRound.score).animate(
-      CurvedAnimation(
-        parent: _scoreAnimController,
-        curve: Curves.easeOut,
-      ),
+      CurvedAnimation(parent: _scoreAnimController, curve: Curves.easeOut),
     );
     _scoreAnimController.forward();
- 
+
     WidgetsBinding.instance.addPostFrameCallback((_) => _fitBounds());
   }
- 
+
   void _fitBounds() {
     final last = ref.read(gameCProvider).completedRounds.last;
     _mapController.fitCamera(
@@ -59,7 +64,7 @@ class _GameCRoundResultScreenState
       ),
     );
   }
- 
+
   void _onNext() {
     final state = ref.read(gameCProvider);
     if (state.phase == GameCPhase.finished) {
@@ -72,14 +77,14 @@ class _GameCRoundResultScreenState
       Navigator.of(context).pop();
     }
   }
- 
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(gameCProvider);
     final last = state.completedRounds.last;
     final isLast = state.phase == GameCPhase.finished;
     final service = ref.read(gameCProvider.notifier).service;
- 
+
     return PopScope(
       canPop: false,
       child: Scaffold(
@@ -105,10 +110,7 @@ class _GameCRoundResultScreenState
                 PolylineLayer(
                   polylines: [
                     Polyline(
-                      points: [
-                        last.guessPosition,
-                        last.targetZone.position,
-                      ],
+                      points: [last.guessPosition, last.targetZone.position],
                       color: AppColors.warningOrange.withAlpha(178),
                       strokeWidth: 2.5,
                       pattern: const StrokePattern.dotted(),
@@ -121,25 +123,19 @@ class _GameCRoundResultScreenState
                       point: last.guessPosition,
                       width: 48,
                       height: 60,
-                      child: const _PinWidget(
-                        color: AppColors.alertRed,
-                        label: 'Tu',
-                      ),
+                      child: const _PinWidget(color: AppColors.alertRed, label: 'Tu'),
                     ),
                     Marker(
                       point: last.targetZone.position,
                       width: 48,
                       height: 60,
-                      child: const _PinWidget(
-                        color: AppColors.gameALight,
-                        label: '✓',
-                      ),
+                      child: const _PinWidget(color: AppColors.gameALight, label: '✓'),
                     ),
                   ],
                 ),
               ],
             ),
- 
+
             // ── Pannello risultato ────────────────────────────────────
             Positioned(
               bottom: 0,
@@ -154,12 +150,20 @@ class _GameCRoundResultScreenState
                 onNext: _onNext,
               ),
             ),
+
+            // ── Tip banner ───────────────────────────────────────────
+            if (_activeTip != null)
+              TipBanner(
+                tip: _activeTip!,
+                onDismiss: () => setState(() => _activeTip = null),
+                topOffset: 12,
+              ),
           ],
         ),
       ),
     );
   }
- 
+
   @override
   void dispose() {
     _scoreAnimController.dispose();
@@ -167,15 +171,15 @@ class _GameCRoundResultScreenState
     super.dispose();
   }
 }
- 
+
 // ── Pin personalizzato ────────────────────────────────────────────────────────
- 
+
 class _PinWidget extends StatelessWidget {
   final Color color;
   final String label;
- 
+
   const _PinWidget({required this.color, required this.label});
- 
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -186,35 +190,19 @@ class _PinWidget extends StatelessWidget {
           decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(6),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black38,
-                blurRadius: 4,
-                offset: Offset(0, 2),
-              ),
-            ],
+            boxShadow: const [BoxShadow(color: Colors.black38, blurRadius: 4, offset: Offset(0, 2))],
           ),
-          child: Text(
-            label,
-            style: AppTextStyles.buttonSmall.copyWith(
-              fontSize: 11,
-              color: Colors.white,
-            ),
-          ),
+          child: Text(label, style: AppTextStyles.buttonSmall.copyWith(fontSize: 11, color: Colors.white)),
         ),
-        Icon(
-          Icons.location_on,
-          color: color,
-          size: 36,
-          shadows: const [Shadow(color: Colors.black54, blurRadius: 6)],
-        ),
+        Icon(Icons.location_on, color: color, size: 36,
+            shadows: const [Shadow(color: Colors.black54, blurRadius: 6)]),
       ],
     );
   }
 }
- 
+
 // ── Pannello risultato ────────────────────────────────────────────────────────
- 
+
 class _ResultPanel extends StatelessWidget {
   final GameCState state;
   final GameCRoundResult last;
@@ -222,7 +210,7 @@ class _ResultPanel extends StatelessWidget {
   final bool isLast;
   final GameCService service;
   final VoidCallback onNext;
- 
+
   const _ResultPanel({
     required this.state,
     required this.last,
@@ -231,18 +219,15 @@ class _ResultPanel extends StatelessWidget {
     required this.service,
     required this.onNext,
   });
- 
+
   @override
   Widget build(BuildContext context) {
     final scoreColor = AppScoreRing.colorFor(last.score, 5000);
     final distLabel = service.formatDistance(last.distanceMeters);
     final label = service.scoreLabel(last.score);
- 
+
     return Container(
-      padding: EdgeInsets.fromLTRB(
-        24, 20, 24,
-        MediaQuery.of(context).padding.bottom + 24,
-      ),
+      padding: EdgeInsets.fromLTRB(24, 20, 24, MediaQuery.of(context).padding.bottom + 24),
       decoration: const BoxDecoration(
         color: AppColors.bgDark,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -258,42 +243,20 @@ class _ResultPanel extends StatelessWidget {
             totalRounds: state.totalRounds,
           ),
           const SizedBox(height: 16),
-          _AreaInfoBox(
-            name: last.targetZone.name,
-            address: last.targetZone.address,
-          ),
+          _AreaInfoBox(name: last.targetZone.name, address: last.targetZone.address),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(
-                child: AppStatChip(
-                  label: 'Distanza',
-                  value: distLabel,
-                  icon: Icons.straighten,
-                  color: AppColors.gameBLight,
-                ),
-              ),
+              Expanded(child: AppStatChip(label: 'Distanza', value: distLabel, icon: Icons.straighten, color: AppColors.gameBLight)),
               const SizedBox(width: 10),
               Expanded(
                 child: AnimatedBuilder(
                   animation: scoreAnim,
-                  builder: (_, __) => AppStatChip(
-                    label: 'Punti round',
-                    value: '${scoreAnim.value}',
-                    icon: Icons.star_rounded,
-                    color: scoreColor,
-                  ),
+                  builder: (_, __) => AppStatChip(label: 'Punti round', value: '${scoreAnim.value}', icon: Icons.star_rounded, color: scoreColor),
                 ),
               ),
               const SizedBox(width: 10),
-              Expanded(
-                child: AppStatChip(
-                  label: 'Totale',
-                  value: '${state.totalScore}',
-                  icon: Icons.emoji_events_rounded,
-                  color: AppColors.gold,
-                ),
-              ),
+              Expanded(child: AppStatChip(label: 'Totale', value: '${state.totalScore}', icon: Icons.emoji_events_rounded, color: AppColors.gold)),
             ],
           ),
           const SizedBox(height: 20),
@@ -303,22 +266,15 @@ class _ResultPanel extends StatelessWidget {
     );
   }
 }
- 
-// ── Header risultato ──────────────────────────────────────────────────────────
- 
+
 class _ResultHeader extends StatelessWidget {
   final String label;
   final Color scoreColor;
   final int currentRound;
   final int totalRounds;
- 
-  const _ResultHeader({
-    required this.label,
-    required this.scoreColor,
-    required this.currentRound,
-    required this.totalRounds,
-  });
- 
+
+  const _ResultHeader({required this.label, required this.scoreColor, required this.currentRound, required this.totalRounds});
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -328,32 +284,21 @@ class _ResultHeader extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              label,
-              style: AppTextStyles.heading3.copyWith(
-                color: scoreColor,
-                fontSize: 16,
-              ),
-            ),
-            Text(
-              'Round $currentRound/$totalRounds completato',
-              style: AppTextStyles.caption,
-            ),
+            Text(label, style: AppTextStyles.heading3.copyWith(color: scoreColor, fontSize: 16)),
+            Text('Round $currentRound/$totalRounds completato', style: AppTextStyles.caption),
           ],
         ),
       ],
     );
   }
 }
- 
-// ── Box info area ─────────────────────────────────────────────────────────────
- 
+
 class _AreaInfoBox extends StatelessWidget {
   final String name;
   final String address;
- 
+
   const _AreaInfoBox({required this.name, required this.address});
- 
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -369,10 +314,7 @@ class _AreaInfoBox extends StatelessWidget {
         children: [
           const Text('AREA DI ATTESA', style: AppTextStyles.label),
           const SizedBox(height: 4),
-          Text(
-            name,
-            style: AppTextStyles.heading3.copyWith(fontSize: 16),
-          ),
+          Text(name, style: AppTextStyles.heading3.copyWith(fontSize: 16)),
           const SizedBox(height: 2),
           Text(address, style: AppTextStyles.caption),
         ],
@@ -380,41 +322,33 @@ class _AreaInfoBox extends StatelessWidget {
     );
   }
 }
- 
-// ── Bottone avanti ────────────────────────────────────────────────────────────
- 
+
 class _NextButton extends StatelessWidget {
   final bool isLast;
   final VoidCallback onNext;
- 
+
   const _NextButton({required this.isLast, required this.onNext});
- 
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
         onPressed: onNext,
-        icon: Icon(
-          isLast ? Icons.bar_chart_rounded : Icons.arrow_forward_rounded,
-        ),
+        icon: Icon(isLast ? Icons.bar_chart_rounded : Icons.arrow_forward_rounded),
         label: Text(isLast ? 'Vedi risultati finali' : 'Prossimo round'),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.gameC,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           textStyle: AppTextStyles.button,
         ),
       ),
     );
   }
 }
- 
-// ── Costanti locali ───────────────────────────────────────────────────────────
- 
+
 class AppConstants {
   static const defaultZoom = 13.5;
 }

@@ -26,7 +26,7 @@ abstract final class AppTips {
     ),
     AppTip(
       id: 'gen_2',
-      title: 'Dove si trovano?',
+      title: 'Dove si trovano le aree di attesa?',
       body: 'Piazze, parcheggi e spazi aperti lontani da edifici a rischio, '
           'versanti instabili e impianti industriali pericolosi.',
     ),
