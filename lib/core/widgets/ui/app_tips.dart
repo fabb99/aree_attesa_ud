@@ -22,7 +22,7 @@ abstract final class AppTips {
       id: 'gen_1',
       title: 'Cos\'è un\'area di attesa?',
       body: 'È il luogo dove la popolazione riceve le prime informazioni e generi '
-          'di conforto dopo un\'emergenza, in attesa di essere trasferita in aree di ricovero.',
+          'di conforto dopo un\'emergenza.',
     ),
     AppTip(
       id: 'gen_2',
@@ -41,8 +41,8 @@ abstract final class AppTips {
     AppTip(
       id: 'gameA_1',
       title: 'Usa i colori come guida',
-      body: 'Verde = area adiacente, giallo = vicino, arancione = nella zona, '
-          'rosso = lontano. Concentrati sulle celle verdi!',
+      body: 'Verde = distanza 1, giallo = distanza 2, arancione = distanza 3, '
+          'rosso = distanza 4+. Concentrati sulle celle verdi!',
       gameTag: 'gameA',
     ),
 
@@ -73,8 +73,8 @@ abstract final class AppTips {
     AppTip(
       id: 'gameB_2',
       title: 'Ricorda i tap precedenti',
-      body: 'Le celle già rivelate restano visibili. Incrociando le distanze '
-          'di due tap sbagliati puoi triangolare la posizione esatta.',
+      body: ' Incrociando le distanze di due tap sbagliati puoi triangolare '
+          'la posizione esatta.',
       gameTag: 'gameB',
     ),
 
@@ -102,7 +102,7 @@ abstract final class AppTips {
     ),
     AppTip(
       id: 'gameC_4',
-      title: 'Non usare l\'auto',
+      title: 'Dopo la scossa: Non usare l\'auto',
       body: 'Le strade devono restare libere per i mezzi di soccorso. '
           'Raggiungi sempre l\'area di attesa a piedi.',
       gameTag: 'gameC',
