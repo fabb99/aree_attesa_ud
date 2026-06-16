@@ -7,7 +7,7 @@ import '../models/game_a_state.dart';
 import '../../../core/models/hex_cell.dart';
 import '../services/game_a_service.dart';
 
-export '../../../core/app_providers.dart'
+export '../../../core/priveders/app_providers.dart'
     show gridRepositoryProvider, safeZoneRepositoryProvider;
 
 // ─── Game A notifier ─────────────────────────────────────────────────────────

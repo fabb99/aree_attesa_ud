@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'data/grid_repository.dart';
-import 'data/safe_zone_repository.dart';
+import '../data/grid_repository.dart';
+import '../data/safe_zone_repository.dart';
 
 /// Provider condivisi tra tutti i giochi.
 ///

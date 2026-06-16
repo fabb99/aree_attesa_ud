@@ -7,7 +7,7 @@ import '../config/game_b_config.dart';
 import '../models/game_b_state.dart';
 import '../services/game_b_service.dart';
 
-export '../../../../core/app_providers.dart'
+export '../../../core/priveders/app_providers.dart'
     show gridRepositoryProvider, safeZoneRepositoryProvider;
 
 // ─── Game B notifier ─────────────────────────────────────────────────────────
