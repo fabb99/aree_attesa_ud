@@ -140,6 +140,7 @@ class _GameAScreenState extends ConsumerState<GameAScreen> {
               FoundZoneBanner(
                 name: gameState.lastFoundName!,
                 address: gameState.lastFoundAddress ?? '',
+                safeZoneId: gameState.safeZones.firstWhere((sz) => sz.name == gameState.lastFoundName).id,
                 onDismiss: () =>
                     ref.read(gameAProvider.notifier).clearLastFound(),
               ),

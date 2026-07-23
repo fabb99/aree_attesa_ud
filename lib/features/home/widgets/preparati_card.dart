@@ -73,7 +73,8 @@ class _PreparatiCardState extends State<PreparatiCard> {
                     ),
                     const SizedBox(height: 2),
                      Text(
-                      'Cosa fare in caso di terremoto · Le aree di attesa',
+                      //'Cosa fare in caso di terremoto ·
+                      'Le aree di attesa',
                       style: AppTextStyles.caption.copyWith(
                         color: AppColors.onColored.withAlpha(178), // bianco attenuato
                       ),

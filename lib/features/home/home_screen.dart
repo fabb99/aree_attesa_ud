@@ -10,6 +10,7 @@ import 'widgets/preparati_card.dart';
 import 'guide_screen.dart';
 import 'onboarding_screen.dart';
 
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -121,6 +122,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   onGuide: () => _openGuide(2),
                 ),
               ),
+
+             
+
+
               const SizedBox(height: 24),
               Center(
                 child: Text(

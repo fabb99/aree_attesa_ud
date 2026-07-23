@@ -88,6 +88,7 @@ class _GameAResultScreenState extends ConsumerState<GameAResultScreen> {
             // ── Banner area trovata ───────────────────────────────────
             if (gameState.lastFoundName != null)
               FoundZoneBanner(
+                safeZoneId: gameState.safeZones.firstWhere((sz) => sz.name == gameState.lastFoundName).id,
                 name: gameState.lastFoundName!,
                 address: gameState.lastFoundAddress ?? '',
                 onDismiss: () =>

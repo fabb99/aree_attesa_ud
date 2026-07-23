@@ -27,7 +27,7 @@ abstract final class AppTextStyles {
 
   static const heading3App = TextStyle(  // per l'header app in home
     color: AppColors.textPrimary,
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: FontWeight.bold,
     letterSpacing: 0.5,
   );

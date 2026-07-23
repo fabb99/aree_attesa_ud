@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
+import '../../../core/widgets/ui/safe_zone_photo_sheet.dart';
 /// Mostra un banner temporaneo quando l'utente trova un'area di attesa.
 class FoundZoneBanner extends StatelessWidget {
   final String name;
   final String address;
   final VoidCallback onDismiss;
+  final int safeZoneId; 
 
   const FoundZoneBanner({
     super.key,
     required this.name,
     required this.address,
     required this.onDismiss,
+    required this.safeZoneId,
   });
 
   @override
@@ -72,6 +75,16 @@ class FoundZoneBanner extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+              IconButton(
+                onPressed: () => SafeZonePhotoSheet.show(
+                  context,
+                  safeZoneId: safeZoneId,
+                  name: name,
+                  address: address,
+                ),
+                icon: const Icon(Icons.photo_library_outlined,
+                    color: Colors.white70, size: 20),
               ),
               IconButton(
                 onPressed: onDismiss,

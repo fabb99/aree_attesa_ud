@@ -9,6 +9,8 @@ import '../../../core/widgets/ui/app_stat_chip.dart';
 import '../models/game_b_state.dart';
 import '../providers/game_b_provider.dart';
 import 'game_b_result_screen.dart';
+import '../../../core/widgets/ui/safe_zone_photo_sheet.dart';
+import '../../../core/models/safe_zone.dart';
 
 class GameBRoundResultScreen extends ConsumerStatefulWidget {
   const GameBRoundResultScreen({super.key});
@@ -28,6 +30,7 @@ class _GameBRoundResultScreenState
     final state = ref.watch(gameBProvider);
     final lastRound = state.completedRounds.last;
     final isLastRound = state.phase == GameBPhase.finished;
+    
 
     return PopScope(
       canPop: false,
@@ -159,6 +162,8 @@ class _RoundResultPanel extends StatelessWidget {
             name: lastRound.targetZone.name,
             address: lastRound.targetZone.address,
           ),
+          const SizedBox(height: 10),
+          _PhotoButton(zone: lastRound.targetZone),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -325,6 +330,38 @@ class _NextButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
           ),
           textStyle: AppTextStyles.button,
+        ),
+      ),
+    );
+  }
+}
+
+
+// ── Bottone foto ───────────────────────────────────────────────────────────────
+
+class _PhotoButton extends StatelessWidget {
+  final SafeZone zone;
+  const _PhotoButton({required this.zone});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: () => SafeZonePhotoSheet.show(
+          context,
+          safeZoneId: zone.id,
+          name: zone.name,
+          address: zone.address,
+        ),
+        icon: const Icon(Icons.photo_library_outlined, size: 16),
+        label: const Text('Vedi foto dell\'area'),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.gameBLight,
+          side: BorderSide(color: AppColors.gameB.withAlpha(128)),
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );

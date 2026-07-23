@@ -15,6 +15,7 @@ dependencies:
   latlong2: ^0.9.1
   shared_preferences: ^2.2.3
   cupertino_icons: ^1.0.6
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:
@@ -79,3 +80,4 @@ flutter:
     - assets/safeZones/49/
     - assets/safeZones/50/
     - assets/safeZones/51/
+    - assets/logo/

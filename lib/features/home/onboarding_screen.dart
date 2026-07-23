@@ -220,18 +220,35 @@ class _OnboardingPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Icona ───────────────────────────────────────────────
-            Container(
-              width: 72,
-              height: 72,
-              decoration: BoxDecoration(
-                color: data.accentColor.withAlpha(28),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: data.accentColor.withAlpha(80),
-                  width: 1.5,
+            Center(
+              child:
+               Container(
+                width: double.infinity,//72,
+                height: 102,
+                
+                // decoration: BoxDecoration(
+                //   color: data.accentColor.withAlpha(28),
+                //   borderRadius: BorderRadius.circular(20),
+                //   border: Border.all(
+                //     color: data.accentColor.withAlpha(80),
+                //     width: 1.5,
+                //   ),
+                // ),
+                //child: Icon(data.icon, color: data.accentColor, size: 34),
+                alignment: Alignment.center,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: Transform.scale(
+                    scale: 1.5,
+                    child: Image.asset(
+                      'assets/logo/sonar cities-07.png',
+                      fit: BoxFit.contain,
+                      
+                      //padding: const EdgeInsets.all(12), // se serve respiro, altrimenti rimuovi
+                    ),
+                  ),
                 ),
               ),
-              child: Icon(data.icon, color: data.accentColor, size: 34),
             ),
             const SizedBox(height: 32),
 
@@ -253,7 +270,7 @@ class _OnboardingPage extends StatelessWidget {
             const SizedBox(height: 16),
 
             // ── Titolo ───────────────────────────────────────────────
-            Text(data.title, style: AppTextStyles.heading1),
+            Text(data.title, style: AppTextStyles.heading2),
             const SizedBox(height: 20),
 
             // ── Divisore ─────────────────────────────────────────────
@@ -388,6 +405,101 @@ class _PageData {
 }
 
 // ── Contenuto pagina ──────────────────────────────────────────────────────────
+const _pageData1 = _PageData(
+  tag: 'Aree di attesa',
+  title: 'Aree di attesa',
+  icon: Icons.school_rounded,
+  accentColor: AppColors.safeNear,
+  body:
+      'Le aree di attesa sono individuate dalla Protezione Civile e '
+      'riportate nel Piano Comunale di Protezione Civile, la guida che '
+      'ti aiuta a essere pront@ in caso di emergenza!',
+  bullets: [],
+);
+
+
+const _pageData5 = _PageData(
+  tag: 'A disaster strikes',
+  title: 'A disaster strikes. You have minutes to act. Do you know where to go?',
+  icon: Icons.school_rounded,
+  accentColor: AppColors.safeNear,
+  body:
+      'Every Italian municipality is required to maintain a '
+      ' Municipal Civil Protection Plan, which designates '
+      'official emergency assembly areas — safe gathering' 
+      'points where residents receive information and first' 
+      'assistance in the immediate aftermath of an event. These areas are'
+      'formally defined, mapped, and ready. But for most citizens, they'
+      'simply do not exist. They have never heard of them.'
+      'This serious game changes that. Born from a concrete proposal' 
+      'by Udine CSB, it guides users to locate and recognise the assembly'
+      'area nearest to them — turning an invisible piece of formal planning'
+      'into knowledge that could, one day, save lives.',
+    bullets: []
+);
+
+const _pageData4 = _PageData(
+  tag: 'Aree Attesa UD',
+  title: 'Aree Attesa UD',
+  icon: Icons.school_rounded,
+  accentColor: AppColors.safeNear,
+  body:
+     'Every Italian municipality '
+'is required to maintain a '
+'Municipal Civil Protection '
+'Plan that identifies official '
+'emergency assembly '
+'areas for first assistance. '
+'Although these areas are '
+'formally mapped, most '
+'citizens are unaware '
+'of them. '
+'Born from a proposal by '
+'Udine CSB, this serious '
+'game helps users locate '
+'and recognise these spaces, ' 
+'turning an invisible layer '
+'of planning into knowledge '
+'that saves lives.',
+
+  bullets: [],
+);
+
+const _pageData3 = _PageData(
+  tag: 'Si verifica un disastro',
+  title: 'Si verifica un disastro. Hai pochi minuti per agire. Sai dove andare?',
+  icon: Icons.school_rounded,
+  accentColor: AppColors.safeNear,
+  body:
+      'Ogni comune italiano è tenuto a predisporre un '
+      'Piano Comunale di Protezione Civile, che individua '
+      'le aree di attesa ufficiali per le emergenze — punti '
+      'di raccolta sicuri dove i cittadini possono ricevere '
+      'informazioni e la prima assistenza subito dopo un evento. '
+      'Queste aree sono formalmente definite, mappate e pronte '
+      'all’uso. Eppure, per la maggior parte delle persone, è '
+      'come se non esistessero: non ne hanno mai sentito parlare. '
+      'Questo serious game nasce per cambiare questa situazione. '
+      'Ideato a partire da una proposta concreta del CSB di Udine, '
+      'guida gli utenti a individuare e riconoscere l’area di attesa '
+      'più vicina, trasformando un elemento fondamentale della '
+      'pianificazione d’emergenza — spesso invisibile ai cittadini — '
+      'in una conoscenza che, un giorno, potrebbe salvare delle vite.',
+  bullets: [],
+);
+
+// A disaster strikes. You have minutes to act. Do you know where to go?
+// 'Every Italian municipality is required to maintain a',
+// 'Municipal Civil Protection Plan, which designates', 
+// 'official emergency assembly areas — safe gathering', 
+// 'points where residents receive information and first', 
+// 'assistance in the immediate aftermath of an event. These areas are', 
+// 'formally defined, mapped, and ready. But for most citizens, they',
+// 'simply do not exist. They have never heard of them.',
+// 'This serious game changes that. Born from a concrete proposal', 
+// 'by Udine CSB, it guides users to locate and recognise the assembly', 
+// 'area nearest to them — turning an invisible piece of formal planning', 
+// 'into knowledge that could, one day, save lives.',
 
 const _pageData = _PageData(
   tag: 'PREPARATI ORA',
