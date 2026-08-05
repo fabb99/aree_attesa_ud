@@ -147,7 +147,7 @@ class _BackgroundDecoration extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  AppColors.alertRed.withAlpha(45),
+                  AppColors.accentDark.withAlpha(0),
                   Colors.transparent,
                 ],
               ),
@@ -164,7 +164,7 @@ class _BackgroundDecoration extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  AppColors.warningOrange.withAlpha(35),
+                  AppColors.accentDark.withAlpha(35),
                   Colors.transparent,
                 ],
               ),
@@ -285,7 +285,7 @@ class _OnboardingPage extends StatelessWidget {
             const SizedBox(height: 24),
 
             // ── Corpo ────────────────────────────────────────────────
-            Text(data.body, style: AppTextStyles.body),
+            Text(data.body, style: AppTextStyles.bodyWhite),
             const SizedBox(height: 28),
 
             // ── Bullet points ─────────────────────────────────────────
@@ -305,7 +305,7 @@ class _OnboardingPage extends StatelessWidget {
                       ),
                     ),
                     Expanded(
-                      child: Text(b, style: AppTextStyles.bodySmall),
+                      child: Text(b, style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary)),
                     ),
                   ],
                 ),
@@ -333,7 +333,7 @@ class _Dot extends StatelessWidget {
       width: active ? 24 : 7,
       height: 7,
       decoration: BoxDecoration(
-        color: active ? AppColors.alertRed : AppColors.border,
+        color: active ? AppColors.accentDark : AppColors.border,
         borderRadius: BorderRadius.circular(4),
       ),
     );
@@ -356,7 +356,7 @@ class _NextButton extends StatelessWidget {
         duration: const Duration(milliseconds: 300),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         decoration: BoxDecoration(
-          color: isLast ? AppColors.alertRed : AppColors.bgCardVariant,
+          color: isLast ? AppColors.accentDark : AppColors.bgCardVariant,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isLast ? Colors.transparent : AppColors.border,
@@ -409,7 +409,7 @@ const _pageData1 = _PageData(
   tag: 'Aree di attesa',
   title: 'Aree di attesa',
   icon: Icons.school_rounded,
-  accentColor: AppColors.safeNear,
+  accentColor: AppColors.accentDark,
   body:
       'Le aree di attesa sono individuate dalla Protezione Civile e '
       'riportate nel Piano Comunale di Protezione Civile, la guida che '
@@ -422,7 +422,7 @@ const _pageData5 = _PageData(
   tag: 'A disaster strikes',
   title: 'A disaster strikes. You have minutes to act. Do you know where to go?',
   icon: Icons.school_rounded,
-  accentColor: AppColors.safeNear,
+  accentColor: AppColors.accentDark,
   body:
       'Every Italian municipality is required to maintain a '
       ' Municipal Civil Protection Plan, which designates '
@@ -505,7 +505,7 @@ const _pageData = _PageData(
   tag: 'PREPARATI ORA',
   title: 'Conosci\nla tua città.',
   icon: Icons.school_rounded,
-  accentColor: AppColors.safeNear,
+  accentColor: AppColors.accent,
   body:
       'La preparazione è la migliore forma di protezione. '
       'Sapere dove si trovano le aree di attesa vicino a casa tua, al lavoro, '

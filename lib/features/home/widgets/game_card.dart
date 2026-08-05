@@ -165,7 +165,7 @@ class _CardTitleRow extends StatelessWidget {
           child: Icon(icon, color: highlightColor, size: 28),
         ),
         const SizedBox(width: 16),
-        Text(title, style: AppTextStyles.gameCardTitle),
+        Text(title, style: AppTextStyles.gameCardTitle.copyWith(color: accentColor)),
       ],
     );
   }

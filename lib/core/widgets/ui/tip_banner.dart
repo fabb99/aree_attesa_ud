@@ -75,7 +75,7 @@ class TipBanner extends StatelessWidget {
                   children: [
                     Text(
                       tip.title,
-                      style: AppTextStyles.bodyWhite.copyWith(
+                      style: AppTextStyles.body.copyWith(
                         fontWeight: FontWeight.w700,
                         fontSize: 13,
                       ),

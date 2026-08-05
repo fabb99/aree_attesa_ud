@@ -14,8 +14,8 @@ class HomeHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              width: 100,//42,
-              height: 100,//42,
+              width: 150,//42,
+              height: 150,//42,
               decoration: BoxDecoration(
                 //color: AppColors.gameA,
                 borderRadius: BorderRadius.circular(12),
@@ -28,7 +28,7 @@ class HomeHeader extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.asset(
-                  'assets/logo/sonar cities-02.png',
+                  'assets/logo/sonar cities-04.png',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -64,7 +64,7 @@ class HomeHeader extends StatelessWidget {
           // 'Born from a proposal by Udine CSB, this serious game helps users locate and '
           // 'recognise these spaces, turning an invisible layer of planning into knowledge that saves lives.',
           
-          style: AppTextStyles.body,
+          style: AppTextStyles.bodyWhite,
         ),
         // const SizedBox(height: 8),
         // const SizedBox(height: 8),

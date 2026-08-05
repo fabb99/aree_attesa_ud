@@ -175,7 +175,7 @@ class _ResultPanel extends StatelessWidget {
         children: [
           AppScoreRing(value: score, maxValue: 100),
           const SizedBox(height: 12),
-          Text(_scoreLabel(score), style: AppTextStyles.heading3),
+          Text(_scoreLabel(score), style: AppTextStyles.heading3.copyWith(color: AppColors.textSecondary)),
           const SizedBox(height: 4),
           Text(
             'Hai trovato $found su $total aree di attesa',

@@ -52,6 +52,7 @@ class AppScoreRing extends StatelessWidget {
                   '$value',
                   style: AppTextStyles.heading2.copyWith(
                     fontSize: size * 0.26,
+                    color: AppColors.textSecondary
                   ),
                 ),
                 if (sublabel != null)

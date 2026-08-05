@@ -158,7 +158,7 @@ class _TargetNameBox extends StatelessWidget {
           const Icon(Icons.search, color: AppColors.gameCLight, size: 16),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(name, style: AppTextStyles.bodyWhite.copyWith(
+            child: Text(name, style: AppTextStyles.body.copyWith(
               fontWeight: FontWeight.w600,
             )),
           ),

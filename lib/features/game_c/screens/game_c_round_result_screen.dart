@@ -314,7 +314,7 @@ class _AreaInfoBox extends StatelessWidget {
         children: [
           const Text('AREA DI ATTESA', style: AppTextStyles.label),
           const SizedBox(height: 4),
-          Text(name, style: AppTextStyles.heading3.copyWith(fontSize: 16)),
+          Text(name, style: AppTextStyles.heading3.copyWith(fontSize: 16, color: AppColors.textSecondary)),
           const SizedBox(height: 2),
           Text(address, style: AppTextStyles.caption),
         ],

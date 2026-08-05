@@ -42,7 +42,7 @@ class GameBTargetPanel extends StatelessWidget {
           children: [
             _PanelHeader(),
             const SizedBox(height: 10),
-            Text(target.name, style: AppTextStyles.heading3),
+            Text(target.name, style: AppTextStyles.heading3.copyWith(color: AppColors.textSecondary)),
             const SizedBox(height: 4),
             _AddressRow(address: target.address),
             const SizedBox(height: 16),

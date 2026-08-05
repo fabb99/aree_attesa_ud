@@ -31,14 +31,14 @@ class _PreparatiCardState extends State<PreparatiCard> {
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [AppColors.alertRedDeep, AppColors.alertRedDark],
+              colors:[AppColors.accent, AppColors.accentDark],// [AppColors.alertRedDeep, AppColors.alertRedDark],
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
             ),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: AppColors.alertRed.withAlpha(60),
+                color: AppColors.accentDark.withAlpha(60),
                 blurRadius: 16,
                 offset: const Offset(0, 4),
               ),

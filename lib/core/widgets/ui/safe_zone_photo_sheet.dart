@@ -138,7 +138,7 @@ class _SheetHeader extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: AppTextStyles.heading3.copyWith(fontSize: 15),
+                  style: AppTextStyles.heading3.copyWith(fontSize: 15, color: AppColors.textSecondary),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),

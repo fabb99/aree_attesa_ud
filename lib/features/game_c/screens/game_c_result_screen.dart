@@ -157,7 +157,7 @@ class _RoundSummaryCard extends StatelessWidget {
               children: [
                 Text(
                   result.targetZone.name,
-                  style: AppTextStyles.bodyWhite.copyWith(
+                  style: AppTextStyles.body.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                   maxLines: 1,

@@ -31,10 +31,10 @@ class _GuideScreenState extends State<GuideScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:AppColors.bgDeep,
+      backgroundColor:AppColors.bgCard,////<<-- E QUI LO SFONDO 
       appBar: AppBar(
-        backgroundColor: AppColors.bgDeep,
-        foregroundColor: AppColors.textSecondary,
+        backgroundColor:AppColors.bgDeep, //AppColors.bgCard,
+        foregroundColor:AppColors.textPrimary,//AppColors.primaryDark,
         elevation: 0,
         title: const Text(
           'Come si gioca',
@@ -49,7 +49,8 @@ class _GuideScreenState extends State<GuideScreen>
           indicatorColor: AppColors.textPrimary,
           indicatorWeight: 2,
           labelColor: AppColors.textPrimary,
-          unselectedLabelColor: AppColors.textSecondary,
+          unselectedLabelColor: Color(0xFF9999BB),// grigio chiaro
+// AppColors.textDisabled,
           labelStyle: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w700,
@@ -204,7 +205,7 @@ class _GameHeader extends StatelessWidget {
               Text(
                 config.title,
                 style: const TextStyle(
-                  color: AppColors.textPrimary,
+                  color: AppColors.textSecondary,
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
                   height: 1.15,
@@ -331,7 +332,7 @@ class _StepRow extends StatelessWidget {
               child: Text(
                 text,
                 style: const TextStyle(
-                  color: AppColors.textPrimary,
+                  color: AppColors.textSecondary,
                   fontSize: 14,
                   height: 1.5,
                 ),
@@ -369,7 +370,7 @@ class _LegendRow extends StatelessWidget {
             child: Text(
               entry.label,
               style: const TextStyle(
-                color: AppColors.textPrimary,
+                color: AppColors.textSecondary,
                 fontSize: 14,
                 height: 1.4,
               ),
@@ -392,7 +393,7 @@ class _ParagraphText extends StatelessWidget {
     return Text(
       text,
       style: const TextStyle(
-        color: AppColors.textPrimary,
+        color: AppColors.textSecondary,
         fontSize: 14,
         height: 1.6,
       ),
