@@ -494,12 +494,19 @@ const _gameAGuide = _GuideConfig(
     'Hai 100 mosse a disposizione: usale con strategia!',
     'Premi "Fine" per terminare anticipatamente e vedere tutte le aree rimanenti.',
   ],
+  // legend: [
+  //   _LegendEntry(color: AppColors.safeFound, label: 'Area di attesa trovata'),
+  //   _LegendEntry(color: AppColors.dist1, label: 'Distanza 1 — area adiacente'),
+  //   _LegendEntry(color: AppColors.dist2, label: 'Distanza 2 — area vicina'),
+  //   _LegendEntry(color: AppColors.dist3, label: 'Distanza 3 — area nella zona'),
+  //   _LegendEntry(color: AppColors.distFar, label: 'Distanza 4+ — area lontana'),
+  // ],
   legend: [
     _LegendEntry(color: AppColors.safeFound, label: 'Area di attesa trovata'),
-    _LegendEntry(color: AppColors.dist1, label: 'Distanza 1 — area adiacente'),
-    _LegendEntry(color: AppColors.dist2, label: 'Distanza 2 — area vicina'),
-    _LegendEntry(color: AppColors.dist3, label: 'Distanza 3 — area nella zona'),
-    _LegendEntry(color: AppColors.distFar, label: 'Distanza 4+ — area lontana'),
+    _LegendEntry(color: AppColors.dist1, label: 'Area adiacente'),
+    _LegendEntry(color: AppColors.dist2, label: 'Area vicina'),
+    _LegendEntry(color: AppColors.dist3, label: 'Area nella zona'),
+    _LegendEntry(color: AppColors.distFar, label: 'Area lontana'),
   ],
   scoring:
       'Ogni area trovata vale punti. Il punteggio finale è la percentuale di aree '

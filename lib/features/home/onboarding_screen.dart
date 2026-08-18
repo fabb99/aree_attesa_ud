@@ -256,7 +256,7 @@ class _OnboardingPage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: data.accentColor.withAlpha(30),
+                color: data.accentColor.withAlpha(40),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -333,7 +333,7 @@ class _Dot extends StatelessWidget {
       width: active ? 24 : 7,
       height: 7,
       decoration: BoxDecoration(
-        color: active ? AppColors.accentDark : AppColors.border,
+        color: Colors.transparent,//active ? AppColors.accentDark : AppColors.border,
         borderRadius: BorderRadius.circular(4),
       ),
     );
@@ -505,7 +505,7 @@ const _pageData = _PageData(
   tag: 'PREPARATI ORA',
   title: 'Conosci\nla tua città.',
   icon: Icons.school_rounded,
-  accentColor: AppColors.accent,
+  accentColor: AppColors.cosmicCobalt,
   body:
       'La preparazione è la migliore forma di protezione. '
       'Sapere dove si trovano le aree di attesa vicino a casa tua, al lavoro, '

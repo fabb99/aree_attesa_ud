@@ -41,8 +41,8 @@ abstract final class AppTips {
     AppTip(
       id: 'gameA_1',
       title: 'Usa i colori come guida',
-      body: 'Verde = distanza 1, giallo = distanza 2, arancione = distanza 3, '
-          'rosso = distanza 4+. Concentrati sulle celle verdi!',
+      body: 'Verde = adiacente, giallo = vicino, arancione = nella zona, '
+          'rosso = lontana. Concentrati sulle celle verdi!',
       gameTag: 'gameA',
     ),
 

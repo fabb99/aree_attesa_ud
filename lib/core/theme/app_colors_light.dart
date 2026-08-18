@@ -8,6 +8,13 @@ import 'package:flutter/material.dart';
 //   White          #FFFFFF
 
 abstract final class AppColors {
+// ── Colori Ufficiali Sonar Cities (Dal PDF) ────────────────────────────────
+  static const cosmicCobalt = Color(0xFF333399);
+  static const peachOrange  = Color(0xFFFFB06C);
+  static const darkGrey     = Color(0xFF282828);
+  static const white        = Color(0xFFFFFFFF);
+
+
   // ── Backgrounds ────────────────────────────────────────────────────────────
   static const bgDeep        = Color(0xFF333399);//Color(0xFFF0F0FA); // bianco con hint cobalt
   static const bgDark        = Color(0xFFE4E4F5); // leggermente più scuro

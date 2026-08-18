@@ -106,7 +106,8 @@ class GameCGuessPhase extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Tocca la mappa per piazzare il pin',
+                    'Tocca la mappa per segnare dove \n credi sia l\'area di attesa',
+                    //'Tocca la mappa per piazzare il segnalino',
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.textPrimary,
                     ),
@@ -186,7 +187,7 @@ class _ConfirmButton extends StatelessWidget {
       child: ElevatedButton.icon(
         onPressed: hasGuess ? onConfirm : null,
         icon: const Icon(Icons.check_rounded),
-        label: const Text('Conferma la mia guess'),
+        label: const Text('Conferma la mia ipotesi'),
         style: ElevatedButton.styleFrom(
           backgroundColor: hasGuess ? AppColors.gameC : AppColors.bgCardVariant,
           foregroundColor: Colors.white,
