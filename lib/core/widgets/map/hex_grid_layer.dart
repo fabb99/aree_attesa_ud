@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'dart:ui' as ui;
 import '../../models/hex_cell.dart';
-import 'hex_cell_color_mapper.dart';
 import '../../theme/app_colors.dart';
- 
+import 'hex_cell_color_mapper.dart';
+
+/// Layer personalizzato per `flutter_map` che renderizza la griglia esagonale.
+///
+/// Utilizza [CustomPaint] per disegnare tutte le celle in un singolo passaggio 
+/// di rendering, garantendo alte prestazioni a 60fps anche con centinaia di esagoni.
 class HexGridLayer extends StatelessWidget {
   final List<HexCell> cells;
   final MapCamera camera;
@@ -45,6 +49,7 @@ class _HexGridPainter extends CustomPainter {
   }
  
   void _drawCell(Canvas canvas, HexCell cell, Size size) {
+    // Proiezione dalle coordinate geografiche (lat/lon) ai pixel dello schermo
     final pixelVertices = cell.vertices.map((v) {
       final point = camera.latLngToScreenPoint(v);
       return Offset(point.x, point.y);
@@ -79,6 +84,7 @@ class _HexGridPainter extends CustomPainter {
       ..color = Colors.blueGrey.shade900.withAlpha(128)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.8;
+      
     canvas.drawPath(path, fillPaint);
     canvas.drawPath(path, strokePaint);
   }
@@ -102,18 +108,19 @@ class _HexGridPainter extends CustomPainter {
     canvas.drawPath(path, fillPaint);
     canvas.drawPath(path, strokePaint);
  
-    // Label: nel Gioco A mostra adiacenti, nel Gioco B mostra distanza dal target
+    // Gestione dinamica delle etichette (Label)
     if (mode == HexGridMode.gameB) {
+      // Nel Gioco B, mostra la distanza dal target
       if (cell.distanceToNearest != null && cell.distanceToNearest! > 0) {
-
         _drawLabel(
           canvas,
           '${cell.distanceToNearest}',
           _centroid(vertices),
-          cell.distanceToNearest==2 ? Colors.black87  : Colors.white ,// se distanza 2 allora scrivilo nero
+          HexCellColorMapper.textColor(cell),
         );
       }
     } else {
+      // Nel Gioco A, mostra quante aree di attesa sono adiacenti (stile Prato Fiorito)
       if (cell.adjacentSafeZones > 0) {
         _drawLabel(
           canvas,
@@ -165,12 +172,15 @@ class _HexGridPainter extends CustomPainter {
       text: textSpan,
       textDirection: TextDirection.ltr,
     )..layout();
+    
+    // Centra il testo esattamente nel mezzo dell'esagono
     textPainter.paint(
       canvas,
       center - Offset(textPainter.width / 2, textPainter.height / 2),
     );
   }
  
+  /// Calcola il centroide (centro geometrico) di un poligono irregolare o regolare.
   Offset _centroid(List<Offset> vertices) {
     double x = 0, y = 0;
     for (final v in vertices) {

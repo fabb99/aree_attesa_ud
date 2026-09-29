@@ -1,51 +1,40 @@
-import 'package:aree_attesa_ud/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import '../../theme/app_colors.dart';
 import '../../models/hex_cell.dart';
 
+/// Modalità di rendering della griglia esagonale.
+/// 
+/// Definisce come le celle devono essere colorate in base alle regole specifiche
+/// del mini-gioco in corso.
+enum HexGridMode { gameA, gameB }
 
-/// Mappa lo stato di una [HexCell] ai colori di rendering.
+/// Mappa lo stato di una [HexCell] ai colori di rendering della UI.
 ///
-/// Questa classe esiste per rispettare il principio SRP:
-/// [HexCell] è un domain object puro (dati geografici + stato di gioco)
-/// e non deve conoscere nulla della UI.
-/// Tutta la logica "che colore ha questa cella?" vive qui, nel layer widget.
-///
-/// Uso:
-/// ```dart
-/// final color = HexCellColorMapper.revealedColor(cell, mode);
-/// final textColor = HexCellColorMapper.textColor(cell);
-/// ```
+/// Implementa il Single Responsibility Principle (SRP): [HexCell] mantiene
+/// solo i dati di dominio, mentre questa classe isola la logica visiva.
 abstract final class HexCellColorMapper {
   
-
-  // ── API pubblica ──────────────────────────────────────────────────────────
-
-  /// Colore di riempimento per una cella in stato [CellState.revealed].
-  ///
-  /// [mode] controlla se applicare il colore speciale per le safe zone:
-  /// - [HexGridMode.gameA]: le safe zone rivelate diventano verde scuro.
-  /// - [HexGridMode.gameB]: si usa solo la distanza, mai il verde safe zone
-  ///   (nel Gioco B la safe zone non deve essere visivamente distinguibile
-  ///   dalle altre celle rivelate).
+  /// Determina il colore di riempimento per una cella in stato [CellState.revealed].
   static Color revealedColor(HexCell cell, HexGridMode mode) {
+    // Nel Gioco A, le aree di attesa scoperte vengono evidenziate visivamente.
     if (mode == HexGridMode.gameA && cell.isSafeZone) {
-      return  AppColors.safeFound;
+      return AppColors.safeFound;
     }
+    
+    // Altrimenti, e sempre nel Gioco B, il colore si basa unicamente sulla distanza.
     return _distanceColor(cell.distanceToNearest);
   }
 
-  /// Colore del testo/label sulla cella rivelata.
-  ///
-  /// Il giallo (distanza 2) richiede testo scuro per contrasto;
-  /// tutti gli altri casi usano bianco.
+  /// Determina il colore del testo/label sovrapposto alla cella rivelata.
   static Color textColor(HexCell cell) {
     if (cell.isSafeZone) return Colors.white;
+    
     final d = cell.distanceToNearest ?? 99;
+    // La distanza 2 (giallo chiaro) richiede testo scuro per garantire il contrasto visivo (Accessibilità).
     return d == 2 ? Colors.black87 : Colors.white;
   }
 
-  // ── Privato ───────────────────────────────────────────────────────────────
-
+  /// Restituisce il colore corrispondente alla mappa di calore (Distanza).
   static Color _distanceColor(int? distance) {
     switch (distance) {
       case 1:  return AppColors.dist1;
@@ -55,7 +44,3 @@ abstract final class HexCellColorMapper {
     }
   }
 }
-
-/// Modalità di rendering della griglia esagonale.
-/// Definita qui perché strettamente legata alla logica di colorazione.
-enum HexGridMode { gameA, gameB }
