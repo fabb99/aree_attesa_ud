@@ -5,12 +5,14 @@ import '../models/safe_zone.dart';
 import '../models/hex_cell.dart';
 
 class SafeZoneRepository {
-  /// Carica il GeoJSON della Protezione Civile FVG e restituisce le aree
-  /// di attesa, con il [cellId] assegnato tramite spatial join sulla griglia.
+  /// Carica il dataset GeoJSON della Protezione Civile FVG.
   ///
-  /// [cells] deve essere già caricato da [GridRepository].
-  /// [municipalityIstat] filtra per comune (default: 30129).
-  /// Passa `null` per caricare tutte le aree senza filtro.
+  /// Esegue due operazioni fondamentali:
+  /// 1. **Filtraggio**: isola solo le aree del comune richiesto ([municipalityIstat]).
+  /// 2. **Spatial Join**: incrocia le coordinate geografiche di ogni area con 
+  ///    la geometria delle celle ([cells]) per assegnare a ciascuna il corretto `cellId`.
+  ///
+  /// Il codice ISTAT di default (30129) corrisponde al Comune di Udine.
   Future<List<SafeZone>> loadSafeZones(
     List<HexCell> cells, {
     int? municipalityIstat = 30129,
@@ -22,19 +24,20 @@ class SafeZoneRepository {
 
     List<dynamic> features;
 
+    // Normalizzazione del formato dei dati
     if (decoded is Map && decoded['type'] == 'FeatureCollection') {
-      // ── GeoJSON FeatureCollection (formato Protezione Civile FVG) ──
+      // ── Formato Standard GeoJSON (Protezione Civile FVG) ──
       features = decoded['features'] as List<dynamic>;
     } else if (decoded is List) {
       features = decoded;
     } else if (decoded is Map && decoded.containsKey('safe_zones')) {
-      // ── Vecchio formato custom ──
+      // ── Fallback di retrocompatibilità per vecchio formato custom ──
       return _parseCustomFormat(decoded['safe_zones'] as List<dynamic>);
     } else {
       return [];
     }
 
-    // Filtra per comune se richiesto
+    // Filtraggio per comune (se richiesto)
     if (municipalityIstat != null) {
       features = features.where((f) {
         final props = (f as Map<String, dynamic>)['properties'];
@@ -44,13 +47,14 @@ class SafeZoneRepository {
       }).toList();
     }
 
-    // Spatial join: per ogni safe zone trova la cella che la contiene
     final safeZones = <SafeZone>[];
     int idx = 0;
 
     for (final f in features) {
       final feature = f as Map<String, dynamic>;
       final geometry = feature['geometry'] as Map<String, dynamic>?;
+
+      // Ignora feature senza coordinate valide
       if (geometry == null || geometry['type'] != 'Point') continue;
 
       final coords = geometry['coordinates'] as List<dynamic>;
@@ -58,8 +62,10 @@ class SafeZoneRepository {
       final lat = (coords[1] as num).toDouble();
       final point = LatLng(lat, lon);
 
-      // Trova la cella che contiene questo punto
+      // Esegue lo Spatial Join: trova la cella che racchiude questa coordinata
       final cellId = _findCellId(cells, point);
+      
+      // Se l'area cade fuori dalla griglia generata, viene scartata
       if (cellId == null) continue; // punto fuori dalla griglia → scarta
       
       safeZones.add(SafeZone.fromGeoJsonFeature(
@@ -73,8 +79,7 @@ class SafeZoneRepository {
     return safeZones;
   }
 
-  /// Spatial join: ritorna l'id della cella che contiene il punto,
-  /// oppure null se nessuna cella lo contiene.
+  /// Helper per lo Spatial Join: cerca l'ID della cella che contiene il [point].
   int? _findCellId(List<HexCell> cells, LatLng point) {
     for (final cell in cells) {
       if (cell.containsPoint(point)) return cell.id;
@@ -82,7 +87,7 @@ class SafeZoneRepository {
     return null;
   }
 
-  /// Supporto retrocompatibile per il vecchio formato custom JSON.
+  /// Supporto per il vecchio formato custom JSON (Legacy).
   List<SafeZone> _parseCustomFormat(List<dynamic> list) {
     return list.whereType<Map<String, dynamic>>().map((z) {
       return SafeZone(

@@ -2,13 +2,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/grid_repository.dart';
 import '../data/safe_zone_repository.dart';
 
-/// Provider condivisi tra tutti i giochi.
+/// Provider di dipendenza condivisi in tutta l'applicazione.
 ///
-/// Definiti una sola volta qui in `core/` per evitare la ridefinizione
-/// identica in ogni feature (game_a, game_b, game_c), che causerebbe
-/// istanze separate e potenziali conflitti nel grafo di dipendenze Riverpod.
-///
-/// Uso: importare questo file invece di ridichiarare i provider localmente.
+/// Definire i repository qui come singleton tramite Provider garantisce
+/// che la cache e la logica di accesso ai dati non vengano duplicate, 
+/// ed evita istanze multiple accidentali tra i diversi mini-giochi.
+
 final gridRepositoryProvider = Provider(
   (_) => GridRepository(),
   name: 'gridRepositoryProvider',

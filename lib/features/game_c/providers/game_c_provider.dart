@@ -13,7 +13,7 @@ import '../photo/game_c_photo_provider.dart';
 //
 // Definiti in core/app_providers.dart — re-export per retrocompatibilità
 // con le screen che li importano da questo file.
-export '../../../core/priveders/app_providers.dart'
+export '../../../core/providers/app_providers.dart'
     show gridRepositoryProvider, safeZoneRepositoryProvider;
 
 // ─── Photo provider ───────────────────────────────────────────────────────────
