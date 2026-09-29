@@ -40,7 +40,6 @@ class AppEndGameDialog extends StatelessWidget {
       ),
       content: Text(
         'Vuoi terminare la partita adesso?\n',
-        //'Tutte le aree di attesa non ancora trovate verranno rivelate.',
         style: AppTextStyles.bodySmall.copyWith(height: 1.5),
       ),
       actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),

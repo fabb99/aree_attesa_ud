@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
 
+/// Singolo elemento indicatore (Chip) all'interno dell'HUD.
+/// Mostra un'icona, una label descrittiva e il valore corrente.
 class AppHudChip extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -39,7 +41,7 @@ class AppHudChip extends StatelessWidget {
   }
 }
 
-/// Divisore verticale standard tra chip nell'HUD.
+/// Divisore verticale standard tra i chip nell'HUD.
 class AppHudDivider extends StatelessWidget {
   const AppHudDivider({super.key});
 
@@ -53,7 +55,7 @@ class AppHudDivider extends StatelessWidget {
   }
 }
 
-/// Bottone "Fine" standard nell'HUD — uguale in tutti e tre i giochi.
+/// Bottone "Fine" standard nell'HUD (condiviso tra tutti i giochi).
 class AppHudEndButton extends StatelessWidget {
   final VoidCallback onTap;
 
@@ -90,8 +92,8 @@ class AppHudEndButton extends StatelessWidget {
   }
 }
 
-/// Container base dell'HUD — sfondo semitrasparente + bordo.
-/// Wrappa i chip e li dispone in Row con spaceBetween.
+/// Container base dell'HUD (Heads-Up Display).
+/// Fornisce lo sfondo semitrasparente e dispone i children in orizzontale.
 class AppHudContainer extends StatelessWidget {
   final List<Widget> children;
 

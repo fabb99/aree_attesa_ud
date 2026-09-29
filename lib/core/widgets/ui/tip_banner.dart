@@ -3,17 +3,10 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
 import 'app_tips.dart';
 
-/// Banner informativo dismissibile che appare sovrapposto alla mappa.
+/// Banner informativo a comparsa sovrapposto alla mappa.
 ///
-/// Posizionato in alto nello Stack, sotto l'HUD.
-/// Esempio d'uso (dentro Stack):
-/// ```dart
-/// if (_activeTip != null)
-///   TipBanner(
-///     tip: _activeTip!,
-///     onDismiss: () => setState(() => _activeTip = null),
-///   ),
-/// ```
+/// Utilizzato per mostrare messaggi educativi all'utente durante il gioco 
+/// senza interrompere il flusso dell'azione (Non-blocking UI).
 class TipBanner extends StatelessWidget {
   final AppTip tip;
   final VoidCallback onDismiss;
@@ -94,7 +87,7 @@ class TipBanner extends StatelessWidget {
                 color: AppColors.textDisabled,
                 iconSize: 18,
                 padding: const EdgeInsets.all(4),
-                constraints: const BoxConstraints(),
+                constraints: const BoxConstraints(), // Rimuove il padding extra di default
               ),
             ],
           ),

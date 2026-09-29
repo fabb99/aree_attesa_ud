@@ -1,12 +1,11 @@
-/// Modello e contenuto delle tips educative.
-///
-/// Aggiungi nuove tips alla lista [allTips].
-/// [gameTag] null  → tip generale (mostrata in tutti i giochi).
-/// [gameTag] 'gameA' / 'gameB' / 'gameC' → mostrata solo in quel gioco.
+/// Modello dati per un singolo suggerimento (tip) educativo.
 class AppTip {
   final String id;
   final String title;
   final String body;
+  
+  /// Identificatore del mini-gioco. Se null, la tip è generica e visibile ovunque.
+  /// Valori supportati: 'gameA', 'gameB', 'gameC'.
   final String? gameTag;
 
   const AppTip({
@@ -16,8 +15,11 @@ class AppTip {
     this.gameTag,
   });
 }
+
+/// Contenitore centralizzato di tutti i suggerimenti educativi dell'applicazione.
 abstract final class AppTips {
   static const List<AppTip> allTips = [
+    // ── Tips Generali ───────────────────────────────────────────────────────
     AppTip(
       id: 'gen_1',
       title: 'Cos\'è un\'area di attesa?',
@@ -37,7 +39,7 @@ abstract final class AppTips {
           'le strade devono restare libere per i mezzi di soccorso.',
     ),
   
-    // ── Gioco A ───────────────────────────────────────────────────────────────────
+    // ── Gioco A (Campo Fiorito) ─────────────────────────────────────────────
     AppTip(
       id: 'gameA_1',
       title: 'Usa i colori come guida',
@@ -45,7 +47,6 @@ abstract final class AppTips {
           'rosso = lontana. Concentrati sulle celle verdi!',
       gameTag: 'gameA',
     ),
-
     AppTip(
       id: 'gameA_2',
       title: 'Guarda il numero sulla cella',
@@ -53,16 +54,15 @@ abstract final class AppTips {
           'immediatamente adiacenti. Usalo per mirare meglio.',
       gameTag: 'gameA',
     ),
-
     AppTip(
       id: 'gameA_3',
       title: 'Cerca i parchi e parcheggi',
-      body:' Le aree di attesa sono spesso in spazi aperti come parchi e parcheggi. '
+      body: 'Le aree di attesa sono spesso in spazi aperti come parchi e parcheggi. '
           'Zoomando sulla mappa puoi riconoscerli e mirare lì.',
       gameTag: 'gameA',
     ),
 
-    // ── Gioco B ───────────────────────────────────────────────────────────────────
+    // ── Gioco B (Localizza l'Area) ──────────────────────────────────────────
     AppTip(
       id: 'gameB_1',
       title: 'La distanza è la tua bussola',
@@ -73,12 +73,12 @@ abstract final class AppTips {
     AppTip(
       id: 'gameB_2',
       title: 'Ricorda i tap precedenti',
-      body: ' Incrociando le distanze di due tap sbagliati puoi triangolare '
+      body: 'Incrociando le distanze di due tap sbagliati puoi triangolare '
           'la posizione esatta.',
       gameTag: 'gameB',
     ),
 
-    // ── Gioco C ───────────────────────────────────────────────────────────────────
+    // ── Gioco C (GeoGuesser) ────────────────────────────────────────────────
     AppTip(
       id: 'gameC_1',
       title: 'Durante la scossa: se sei in casa',
@@ -102,24 +102,21 @@ abstract final class AppTips {
     ),
     AppTip(
       id: 'gameC_4',
-      title: 'Dopo la scossa: Non usare l\'auto',
+      title: 'Dopo la scossa: non usare l\'auto',
       body: 'Le strade devono restare libere per i mezzi di soccorso. '
           'Raggiungi sempre l\'area di attesa a piedi.',
       gameTag: 'gameC',
     ),
-    ];
+  ];
 
-  /// Tips applicabili a [gameTag]: tutte le generali + quelle specifiche.
+  /// Restituisce le tip applicabili al gioco specifico (generali + specifiche).
   static List<AppTip> forGame(String gameTag) => allTips
       .where((t) => t.gameTag == null || t.gameTag == gameTag)
       .toList();
 
-  /// Seleziona una tip casuale tra quelle disponibili per [gameTag],
-  /// escludendo opzionalmente un id già mostrato di recente.
+  /// Seleziona una tip casuale, evitando opzionalmente di ripetere [excludeId].
   static AppTip pickRandom(String gameTag, {String? excludeId}) {
-    final pool = forGame(gameTag)
-        .where((t) => t.id != excludeId)
-        .toList();
+    final pool = forGame(gameTag).where((t) => t.id != excludeId).toList();
     final source = pool.isNotEmpty ? pool : forGame(gameTag);
     source.shuffle();
     return source.first;
