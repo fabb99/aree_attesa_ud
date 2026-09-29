@@ -6,7 +6,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/ui/app_end_game_dialog.dart';
 import '../../../core/widgets/map/hex_grid_layer.dart';
-import '../../../core/widgets/ui/found_zone_banner.dart';
+import '../widgets/found_zone_banner.dart';
 import '../../../core/widgets/ui/tip_banner.dart';        // ← nuovo
 import '../../../core/widgets/ui/app_tips.dart';           // ← nuovo
 import '../models/game_a_state.dart';

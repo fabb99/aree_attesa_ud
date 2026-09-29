@@ -7,7 +7,7 @@ import '../data/safe_zone_repository.dart';
 /// Definire i repository qui come singleton tramite Provider garantisce
 /// che la cache e la logica di accesso ai dati non vengano duplicate, 
 /// ed evita istanze multiple accidentali tra i diversi mini-giochi.
-
+///                                                                                                                                                                                                                                                                                                                                                                                               
 final gridRepositoryProvider = Provider(
   (_) => GridRepository(),
   name: 'gridRepositoryProvider',

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_colors.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/ui/safe_zone_photo_sheet.dart';
 /// Mostra un banner temporaneo quando l'utente trova un'area di attesa.
 class FoundZoneBanner extends StatelessWidget {

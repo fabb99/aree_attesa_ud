@@ -7,7 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/map/hex_grid_layer.dart';
 import '../../../core/widgets/ui/app_score_ring.dart';
-import '../../../core/widgets/ui/found_zone_banner.dart';
+import '../widgets/found_zone_banner.dart';
 import '../models/game_a_state.dart';
 import '../providers/game_a_provider.dart';
 import '../../../core/models/hex_cell.dart';

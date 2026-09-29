@@ -11,7 +11,7 @@ import 'widgets/preparati_card.dart';
 import 'guide_screen.dart';
 import 'onboarding_screen.dart';
 
-import '../../core/widgets/ui/sonar_wave_header.dart';
+import 'widgets/sonar_wave_header.dart';
 
 
 
