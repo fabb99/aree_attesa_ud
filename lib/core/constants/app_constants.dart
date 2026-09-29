@@ -1,10 +1,7 @@
 import 'package:latlong2/latlong.dart';
 
 /// Costanti condivise tra tutti i moduli dell'app.
-///
-/// Centralizzare qui evita la ridefinizione della stessa costante
-/// in ogni screen (es. `_udinCenter`, `_udineCenter` erano definiti
-/// in 4 file diversi con nomi leggermente diversi).
+
 abstract final class AppConstants {
   // ── Mappa ─────────────────────────────────────────────────────────────────
 
