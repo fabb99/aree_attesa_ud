@@ -1,27 +1,41 @@
 import 'package:latlong2/latlong.dart';
 
+/// Stati possibili per una cella esagonale nella griglia di gioco.
 enum CellState { hidden, revealed, found }
 
+/// Modello di dominio che rappresenta una singola cella esagonale della mappa.
+///
+/// Contiene sia i dati geometrici statici (centro, vertici, vicini) generati
+/// pre-partita, sia lo stato mutabile del gioco (distanza, se è stata rivelata, ecc.).
 class HexCell {
+  // ── Dati Geometrici (Immutabili) ──────────────────────────────────────────
   final int id;
   final LatLng center;
-  final List<LatLng> vertices; // 6 vertici in lat/lon
+
+  /// I 6 vertici dell'esagono in coordinate lat/lon.
+  final List<LatLng> vertices; 
+
+  /// ID delle celle adiacenti (per visite BFS/calcolo distanze).
   final List<int> neighbors;
 
-  // Stato di gioco (mutabile tramite copyWith)
+  // ── Stato di Gioco (Mutabile tramite copyWith) ────────────────────────────
+  
+  /// Stato visivo della cella.
   final CellState state;
-
-  // Distanza alla safe zone più vicina (calcolata da GameService)
+  
+  /// Distanza alla safe zone più vicina (calcolata da GameService)
   final int? distanceToNearest;
 
-  // Quante safe zone nelle celle adiacenti (distanza 1)
+  /// Quante safe zone nelle celle adiacenti (distanza 1)
   final int adjacentSafeZones;
 
-  // true se questa cella è una safe zone
+  /// true se questa cella è una safe zone
   final bool isSafeZone;
 
-  // Nome e indirizzo (se isSafeZone)
+  /// Nome dell'area di attesa (se [isSafeZone] è true).
   final String? safeZoneName;
+
+  /// Indirizzo dell'area di attesa (se [isSafeZone] è true).
   final String? safeZoneAddress;
 
   const HexCell({
@@ -37,6 +51,12 @@ class HexCell {
     this.safeZoneAddress,
   });
 
+  /// Oggetto sentinella per distinguere l'omissione del parametro 
+  /// dal passaggio esplicito di un valore null nel [copyWith].
+  static const Object _sentinel = Object();
+
+
+  /// Crea una copia della cella aggiornando solo i campi specificati.
   HexCell copyWith({
     CellState? state,
     Object? distanceToNearest = _sentinel,
@@ -51,6 +71,7 @@ class HexCell {
       vertices: vertices,
       neighbors: neighbors,
       state: state ?? this.state,
+      // Permette di resettare esplicitamente a null se viene passato null
       distanceToNearest: distanceToNearest == _sentinel
         ? this.distanceToNearest
         : distanceToNearest as int?,
@@ -61,8 +82,9 @@ class HexCell {
     );
   }
 
-  static const Object _sentinel = Object();
 
+
+  /// Deserializzazione da JSON (usata per caricare la griglia pre-calcolata).
   factory HexCell.fromJson(Map<String, dynamic> json) {
     final centerMap = json['center'] as Map<String, dynamic>;
     final verticesList = (json['vertices'] as List)
@@ -85,8 +107,11 @@ class HexCell {
     );
   }
 
-  /// Controlla se un punto (lat/lon) è dentro il poligono esagonale
-  /// usando il ray-casting algorithm
+/// Verifica se una coordinata [point] si trova all'interno di questo esagono.
+  /// 
+  /// Implementa il **Ray-casting algorithm** (Point in Polygon): traccia un 
+  /// raggio orizzontale dal punto e conta quante volte interseca i lati del 
+  /// poligono. Un numero dispari significa che il punto è interno.
   bool containsPoint(LatLng point) {
     int n = vertices.length;
     bool inside = false;
@@ -96,6 +121,8 @@ class HexCell {
       double xi = vertices[i].longitude, yi = vertices[i].latitude;
       double xj = vertices[j].longitude, yj = vertices[j].latitude;
 
+
+      // Controlla l'intersezione del raggio con il segmento i-j
       bool intersect =
           ((yi > y) != (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
       if (intersect) inside = !inside;
