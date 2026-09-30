@@ -27,6 +27,12 @@ abstract final class HexCellColorMapper {
 
   /// Determina il colore del testo/label sovrapposto alla cella rivelata.
   static Color textColor(HexCell cell) {
+    // Se la cella è a distanza 2, lo sfondo è giallo chiaro (dist2).
+    // Richiede SEMPRE e categoricamente testo scuro per contrasto visivo!
+    if (cell.distanceToNearest == 2) {
+      return Colors.black87;
+    }
+
     if (cell.isSafeZone) return Colors.white;
     
     final d = cell.distanceToNearest ?? 99;
