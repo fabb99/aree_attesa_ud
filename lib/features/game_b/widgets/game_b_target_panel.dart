@@ -3,8 +3,13 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../models/game_b_state.dart';
 
+/// Pannello posizionato in basso nel Gioco B che indica all'utente
+/// l'area di attesa da trovare (Nome + Indirizzo) e fornisce feedback
+/// se l'utente sbaglia il tocco ("Sei a X celle di distanza!").
 class GameBTargetPanel extends StatelessWidget {
   final GameBState state;
+  
+  /// La distanza (in celle) risultante dall'ultimo tocco errato.
   final int? lastWrongDistance;
 
   const GameBTargetPanel({
@@ -16,6 +21,7 @@ class GameBTargetPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final target = state.targetZone!;
+    // Se c'è almeno un tocco errato e abbiamo una distanza valida, mostriamo l'alert.
     final hasWrongTap = state.wrongTaps > 0 && lastWrongDistance != null;
 
     return Positioned(
@@ -40,9 +46,12 @@ class GameBTargetPanel extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _PanelHeader(),
+            const _PanelHeader(),
             const SizedBox(height: 10),
-            Text(target.name, style: AppTextStyles.heading3.copyWith(color: AppColors.textSecondary)),
+            Text(
+              target.name, 
+              style: AppTextStyles.heading3.copyWith(color: AppColors.textSecondary)
+            ),
             const SizedBox(height: 4),
             _AddressRow(address: target.address),
             const SizedBox(height: 16),
@@ -60,6 +69,8 @@ class GameBTargetPanel extends StatelessWidget {
 // ── Header "TROVA QUEST'AREA" ─────────────────────────────────────────────────
 
 class _PanelHeader extends StatelessWidget {
+  const _PanelHeader();
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -156,8 +167,7 @@ class _FeedbackBox extends StatelessWidget {
                   : 'Tocca la cella sulla mappa dove pensi si trovi!',
               style: AppTextStyles.bodySmall.copyWith(
                 color: color,
-                fontWeight:
-                    hasWrongTap ? FontWeight.w600 : FontWeight.normal,
+                fontWeight: hasWrongTap ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
           ),

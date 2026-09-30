@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart'; 
 import 'package:latlong2/latlong.dart';
 import '../../../../core/data/grid_repository.dart';
 import '../../../../core/data/safe_zone_repository.dart';
@@ -10,19 +11,33 @@ import '../services/game_b_service.dart';
 export '../../../core/providers/app_providers.dart'
     show gridRepositoryProvider, safeZoneRepositoryProvider;
 
-// ─── Game B notifier ─────────────────────────────────────────────────────────
+// ─── Struttura interna ────────────────────────────────────────────────────────
 
+/// Rappresentazione interna del target corrente (SafeZone + ID della cella in mappa).
+class _RoundTarget {
+  final SafeZone safeZone;
+  final int cellId;
+
+  const _RoundTarget({required this.safeZone, required this.cellId});
+}
+
+// ─── Game B Notifier ─────────────────────────────────────────────────────────
+
+/// Gestore dello stato per il Gioco B.
 class GameBNotifier extends StateNotifier<GameBState> {
   GameBNotifier() : super(GameBState.initial());
 
   final GameBService _service = GameBService();
   List<_RoundTarget> _roundTargets = [];
 
-  /// Contatore wrongTap cumulativi dall'ultima tip mostrata.
-  /// Vive nel notifier (non nello state) perché è logica interna,
-  /// non serve alla UI per renderizzare nulla.
+  /// Contatore dei tap sbagliati (errori cumulativi sull'intera partita).
+  ///
+  /// Mantenuto all'interno del Notifier e non in `GameBState` poiché è logica 
+  /// interna (serve solo per determinare *quando* alzare la notifica di un Tip)
+  /// e non un dato che la UI deve renderizzare direttamente.
   int _wrongTapsSinceLastTip = 0;
 
+  /// Inizializza la partita (carica i dati, estrae i target, prepara il Round 1).
   Future<void> initGame({
     required GridRepository gridRepo,
     required SafeZoneRepository szRepo,
@@ -53,15 +68,14 @@ class GameBNotifier extends StateNotifier<GameBState> {
         phase: GameBPhase.playing,
       );
     } catch (e, stack) {
-      // ignore: avoid_print
-      print('[GameB] Errore caricamento: $e\n$stack');
+      debugPrint('[GameB] Errore caricamento: $e\n$stack');
       rethrow;
     }
   }
 
-  /// Gestisce il tap su una cella.
+  /// Gestisce il tap su una cella durante la fase di gioco.
   ///
-  /// Restituisce `true` se va mostrata una tip dopo questo tap.
+  /// Ritorna `true` se la UI deve attivare e mostrare un suggerimento educativo.
   bool tapCell(int cellId) {
     if (state.phase != GameBPhase.playing) return false;
 
@@ -76,6 +90,7 @@ class GameBNotifier extends StateNotifier<GameBState> {
     bool shouldShowTip = false;
 
     if (result.isCorrect) {
+      // ── CASO A: L'utente ha indovinato ──
       final roundScore = _service.calculateRoundScore(state.wrongTaps);
       final completedRound = RoundResult(
         targetZone: _roundTargets[state.currentRound].safeZone,
@@ -92,15 +107,14 @@ class GameBNotifier extends StateNotifier<GameBState> {
         phase: isLastRound ? GameBPhase.finished : GameBPhase.roundResult,
       );
     } else {
-      // ── Logica tip ──────────────────────────────────────────────────────────
-      // wrongTaps è per-round (resettato a 0 ogni nextRound).
-      // _wrongTapsSinceLastTip è cumulativo su tutta la partita.
+      // ── CASO B: L'utente ha sbagliato ──
       _wrongTapsSinceLastTip += 1;
+      
+      // Controllo per il trigger dei suggerimenti (Tips)
       if (_wrongTapsSinceLastTip >= GameBConfig.wrongTapsPerTip) {
         shouldShowTip = true;
-        _wrongTapsSinceLastTip = 0; // reset
+        _wrongTapsSinceLastTip = 0; // Reset
       }
-      // ───────────────────────────────────────────────────────────────────────
 
       final newWrongTaps = state.wrongTaps + 1;
       final newRoundScore = _service.calculateRoundScore(newWrongTaps);
@@ -115,6 +129,7 @@ class GameBNotifier extends StateNotifier<GameBState> {
     return shouldShowTip;
   }
 
+  /// Passa al round successivo ripristinando la mappa e i punteggi.
   void nextRound() {
     if (state.phase != GameBPhase.roundResult) return;
 
@@ -131,6 +146,7 @@ class GameBNotifier extends StateNotifier<GameBState> {
     );
   }
 
+  /// Cerca quale cella corrisponde a un punto specifico (usato dal tap mappa).
   int? findCellAtPoint(LatLng point) {
     for (final cell in state.cells) {
       if (cell.containsPoint(point)) return cell.id;
@@ -138,19 +154,11 @@ class GameBNotifier extends StateNotifier<GameBState> {
     return null;
   }
 
+  /// Forza la fine anticipata del gioco.
   void endGame() {
     if (state.phase != GameBPhase.playing) return;
     state = state.copyWith(phase: GameBPhase.finished);
   }
-}
-
-// ─── Struttura interna ────────────────────────────────────────────────────────
-
-class _RoundTarget {
-  final SafeZone safeZone;
-  final int cellId;
-
-  const _RoundTarget({required this.safeZone, required this.cellId});
 }
 
 // ─── Provider ────────────────────────────────────────────────────────────────

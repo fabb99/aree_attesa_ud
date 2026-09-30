@@ -11,7 +11,7 @@ import '../../../core/widgets/ui/app_score_ring.dart';
 import '../../../core/models/hex_cell.dart';
 import '../models/game_a_state.dart';
 import '../providers/game_a_provider.dart';
-import '../widgets/found_zone_banner.dart'; // Import corretto dalla feature
+import '../widgets/found_zone_banner.dart'; 
 import 'game_a_screen.dart';
 
 /// Schermata di riepilogo al termine del Gioco A.

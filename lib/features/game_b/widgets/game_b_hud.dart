@@ -3,6 +3,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/ui/app_hud_chip.dart';
 import '../models/game_b_state.dart';
 
+/// Pannello di controllo per il Gioco B.
+/// Mostra in tempo reale lo stato del Round e il punteggio (totale/corrente).
 class GameBHud extends StatelessWidget {
   final GameBState state;
   final VoidCallback onEndGame;
@@ -28,6 +30,7 @@ class GameBHud extends StatelessWidget {
           icon: Icons.touch_app,
           label: 'Tentativi',
           value: '${state.wrongTaps}',
+          // Diventa rosso non appena l'utente compie il primo errore
           color: state.wrongTaps == 0
               ? AppColors.gameALight
               : AppColors.alertRed,

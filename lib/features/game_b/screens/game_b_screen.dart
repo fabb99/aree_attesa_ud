@@ -1,21 +1,23 @@
-import 'package:aree_attesa_ud/core/widgets/map/hex_cell_color_mapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
+
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/map/hex_cell_color_mapper.dart';
 import '../../../core/widgets/map/hex_grid_layer.dart';
 import '../../../core/widgets/ui/app_end_game_dialog.dart';
-import '../../../core/widgets/ui/tip_banner.dart';         // ← nuovo
-import '../../../core/widgets/ui/app_tips.dart';            // ← nuovo
+import '../../../core/widgets/ui/app_tips.dart';
+import '../../../core/widgets/ui/tip_banner.dart';
 import '../models/game_b_state.dart';
 import '../providers/game_b_provider.dart';
 import '../widgets/game_b_hud.dart';
 import '../widgets/game_b_target_panel.dart';
-import 'game_b_round_result_screen.dart';
 import 'game_b_result_screen.dart';
+import 'game_b_round_result_screen.dart';
 
+/// Schermata principale del "Gioco B - Localizza l'Area".
 class GameBScreen extends ConsumerStatefulWidget {
   const GameBScreen({super.key});
 
@@ -28,7 +30,7 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
   MapCamera? _currentCamera;
   int? _lastWrongDistance;
 
-  // ── Tip state ─────────────────────────────────────────────────────────────
+  // ── Gestione Tip (locale) ───────────────────────────────────────────────────
   AppTip? _activeTip;
   String? _lastTipId;
 
@@ -60,6 +62,7 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
     );
   }
 
+  /// Gestisce il tocco sulla mappa
   void _onMapTap(TapPosition tapPos, LatLng latLng) {
     final state = ref.read(gameBProvider);
     if (state.phase != GameBPhase.playing) return;
@@ -69,36 +72,41 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
     if (cellId == null) return;
 
     final wrongTapsBefore = state.wrongTaps;
-
-    // tapCell ora restituisce bool: true = mostra tip
+    
+    // tapCell restituisce true se l'utente ha sbagliato abbastanza volte 
+    // da richiedere l'apertura del suggerimento
     final shouldShowTip = notifier.tapCell(cellId);
-
     final newState = ref.read(gameBProvider);
 
+    // Se il tap è stato errato (numero di errori aumentato)
     if (newState.wrongTaps > wrongTapsBefore) {
       final tappedCell = newState.cells.firstWhere(
         (c) => c.id == cellId,
         orElse: () => newState.cells.first,
       );
       setState(() {
+        // Aggiorniamo la UI per mostrare la distanza a cui l'utente ha toccato
         _lastWrongDistance = tappedCell.distanceToNearest;
         if (shouldShowTip) _showTip();
       });
     }
 
+    // Se il tap era corretto (il round o il gioco è finito)
     if (newState.phase == GameBPhase.roundResult ||
         newState.phase == GameBPhase.finished) {
       setState(() => _lastWrongDistance = null);
+      
       Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => const GameBRoundResultScreen()),
       );
+
     }
   }
 
   void _showTip() {
     final tip = AppTips.pickRandom('gameB', excludeId: _lastTipId);
     _lastTipId = tip.id;
-    _activeTip = tip; // già dentro setState nel chiamante
+    setState(() => _activeTip = tip);
   }
 
   @override
@@ -131,8 +139,7 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
               ),
               children: [
                 TileLayer(
-                  urlTemplate:
-                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.aree_attesa_ud',
                 ),
               ],
@@ -144,18 +151,19 @@ class _GameBScreenState extends ConsumerState<GameBScreen> {
                 child: HexGridLayer(
                   cells: state.cells,
                   camera: _currentCamera!,
+                  // Importante: forza la modalità GameB per colorare in base alla distanza
                   mode: HexGridMode.gameB,
                 ),
               ),
 
-            // ── HUD ──────────────────────────────────────────────────
+            // ── HUD (Punteggi in alto) ───────────────────────────────
             if (state.phase == GameBPhase.playing)
               GameBHud(
                 state: state,
                 onEndGame: _onEndGameRequested,
               ),
 
-            // ── Pannello target ───────────────────────────────────────
+            // ── Pannello Target (Area da trovare in basso) ───────────
             if (state.phase == GameBPhase.playing && state.targetZone != null)
               GameBTargetPanel(
                 state: state,

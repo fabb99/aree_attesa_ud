@@ -24,6 +24,7 @@ class _GameBRoundResultScreenState
     extends ConsumerState<GameBRoundResultScreen> {
   final MapController _mapController = MapController();
   MapCamera? _currentCamera;
+  bool _isExiting = false;
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +81,7 @@ class _GameBRoundResultScreenState
             ),
 
             // ── Griglia ──────────────────────────────────────────────
-            if (_currentCamera != null)
+            if (_currentCamera != null && !_isExiting && state.phase == GameBPhase.roundResult)
               IgnorePointer(
                 child: HexGridLayer(
                   cells: state.cells,
@@ -113,6 +114,7 @@ class _GameBRoundResultScreenState
         (route) => route.isFirst,
       );
     } else {
+      setState(() => _isExiting = true);
       ref.read(gameBProvider.notifier).nextRound();
       Navigator.of(context).pop();
     }
@@ -262,11 +264,11 @@ class _RoundHeader extends StatelessWidget {
   }
 
   String _roundLabel(int score) {
-    if (score == 1000) return '🎯 Perfetto al primo colpo!';
-    if (score >= 900) return '👍 Quasi perfetto';
-    if (score >= 600) return '👍 Ottimo!';
-    if (score >= 300) return '📚 Ci sei quasi!';
-    return '💪 Continua a esplorare!';
+    if (score == 1000) return 'Perfetto al primo colpo!';
+    if (score >= 800) return 'Quasi perfetto';
+    if (score >= 500) return 'Ottimo!';
+    if (score >= 300) return 'Ci sei quasi!';
+    return 'Continua a esplorare!';
   }
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/ui/app_result_actions.dart';
@@ -8,6 +9,7 @@ import '../models/game_b_state.dart';
 import '../providers/game_b_provider.dart';
 import 'game_b_screen.dart';
 
+/// Schermata finale riepilogativa dell'intera partita (Gioco B).
 class GameBResultScreen extends ConsumerWidget {
   const GameBResultScreen({super.key});
 
@@ -39,8 +41,7 @@ class GameBResultScreen extends ConsumerWidget {
               ),
               AppResultActions(
                 primaryColor: AppColors.gameB,
-                onHome: () =>
-                    Navigator.of(context).popUntil((r) => r.isFirst),
+                onHome: () => Navigator.of(context).popUntil((r) => r.isFirst),
                 onPlayAgain: () {
                   Navigator.of(context).popUntil((r) => r.isFirst);
                   Navigator.of(context).push(
@@ -116,7 +117,7 @@ class _ScoreHeader extends StatelessWidget {
   }
 }
 
-// ── Card round ────────────────────────────────────────────────────────────────
+// ── Card riepilogo del singolo round ──────────────────────────────────────────
 
 class _RoundSummaryCard extends StatelessWidget {
   final int roundNumber;
@@ -148,16 +149,13 @@ class _RoundSummaryCard extends StatelessWidget {
               children: [
                 Text(
                   result.targetZone.name,
-                  style: AppTextStyles.body.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${result.tapsUsed} '
-                  'tentativ${result.tapsUsed == 1 ? 'o' : 'i'}',
+                  '${result.tapsUsed} tentativ${result.tapsUsed == 1 ? 'o' : 'i'}',
                   style: AppTextStyles.caption,
                 ),
               ],

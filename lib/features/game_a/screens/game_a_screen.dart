@@ -12,7 +12,7 @@ import '../../../core/widgets/ui/tip_banner.dart';
 import '../models/game_a_state.dart';
 import '../providers/game_a_provider.dart';
 import '../widgets/game_a_hud.dart';
-import '../widgets/found_zone_banner.dart'; // Import corretto dalla feature
+import '../widgets/found_zone_banner.dart'; 
 import 'game_a_result_screen.dart';
 
 /// Schermata principale del "Gioco A - Campo Fiorito".
