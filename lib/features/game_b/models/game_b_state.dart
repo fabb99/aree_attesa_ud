@@ -1,9 +1,10 @@
 import '../../../../core/models/hex_cell.dart';
 import '../../../../core/models/safe_zone.dart';
 
+/// Fasi di gioco possibili per il Gioco B.
 enum GameBPhase { loading, playing, roundResult, finished }
 
-/// Rappresenta il risultato di un singolo round completato
+/// Rappresenta il risultato immutabile di un singolo round completato.
 class RoundResult {
   final SafeZone targetZone;
   final int tapsUsed;
@@ -16,24 +17,27 @@ class RoundResult {
   });
 }
 
+/// Stato immutabile del Gioco B gestito da Riverpod.
 class GameBState {
   final List<HexCell> cells;
   final List<SafeZone> safeZones;
 
-  /// Round corrente (0-based)
+  /// Round corrente (0-based).
   final int currentRound;
+  
+  /// Numero totale di round previsti per la partita.
   final int totalRounds;
 
-  /// Area di attesa da indovinare nel round corrente
+  /// Area di attesa che l'utente deve indovinare nel round corrente.
   final SafeZone? targetZone;
 
-  /// Numero di tap sbagliati nel round corrente
+  /// Numero di tap sbagliati nel round corrente.
   final int wrongTaps;
 
-  /// Punteggio corrente del round (scende ad ogni tap sbagliato)
+  /// Punteggio corrente del round (diminuisce ad ogni errore).
   final int currentRoundScore;
 
-  /// Risultati dei round completati
+  /// Storico dei risultati dei round completati.
   final List<RoundResult> completedRounds;
 
   final GameBPhase phase;
@@ -50,17 +54,18 @@ class GameBState {
     this.phase = GameBPhase.loading,
   });
 
-  /// Punteggio cumulativo di tutti i round completati
+  /// Punteggio cumulativo calcolato sommando i punteggi di tutti i round completati.
   int get totalScore =>
       completedRounds.fold(0, (sum, r) => sum + r.score);
 
-  /// Punteggio massimo ottenibile (tutti i round a punteggio pieno)
+  /// Punteggio massimo teorico ottenibile (tutti i round a punteggio pieno).
   int get maxPossibleScore => totalRounds * 1000;
 
-  /// Percentuale punteggio finale (0–100)
+  /// Percentuale del punteggio finale rispetto al massimo teorico (0–100).
   int get scorePercentage =>
       maxPossibleScore == 0 ? 0 : (totalScore * 100 ~/ maxPossibleScore);
 
+  /// Metodo per ricreare lo stato modificando solo i campi necessari.
   GameBState copyWith({
     List<HexCell>? cells,
     List<SafeZone>? safeZones,
@@ -85,6 +90,7 @@ class GameBState {
     );
   }
 
+  /// Stato iniziale "vuoto" mostrato durante il caricamento dei dati.
   static GameBState initial() => const GameBState(
         cells: [],
         safeZones: [],

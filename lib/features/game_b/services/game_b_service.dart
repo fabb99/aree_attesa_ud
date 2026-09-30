@@ -3,8 +3,13 @@ import '../../../../core/models/hex_cell.dart';
 import '../../../../core/models/safe_zone.dart';
 import '../config/game_b_config.dart';
  
+/// Logica pura (Business Logic) del Gioco B.
 class GameBService {
-  /// Calcola la distanza in celle tra due celle tramite BFS sul grafo di adiacenza.
+  
+  /// Calcola la distanza in "salti" tra due celle tramite BFS sul grafo di adiacenza.
+  /// 
+  /// In questo gioco, quando l'utente sbaglia, il feedback visivo (colore e numero) 
+  /// dipende da quante celle lo separano dal target.
   int cellDistance(List<HexCell> cells, int fromId, int toId) {
     if (fromId == toId) return 0;
  
@@ -29,7 +34,7 @@ class GameBService {
     return 9999;
   }
  
-  /// Calcola il punteggio del round in base ai tap sbagliati.
+  /// Calcola il punteggio del round scalando una penalità per ogni errore.
   int calculateRoundScore(int wrongTaps) {
     final score =
         GameBConfig.maxScorePerRound - (wrongTaps * GameBConfig.penaltyPerWrongTap);
@@ -37,8 +42,9 @@ class GameBService {
   }
  
   /// Inizializza le celle per il Gioco B.
-  /// IMPORTANTE: isSafeZone viene mantenuto nei metadati ma NON influenza
-  /// il rendering — il HexGridLayer in modalità gameB usa solo distanceToNearest.
+  /// 
+  /// Mantiene il flag `isSafeZone` nei metadati, ma la griglia viene renderizzata
+  /// usando solo `distanceToNearest`, per non suggerire visivamente la risposta.
   List<HexCell> initializeCells(
     List<HexCell> rawCells,
     List<SafeZone> safeZones,
@@ -54,28 +60,30 @@ class GameBService {
         isSafeZone: isSafe,
         safeZoneName: sz?.name,
         safeZoneAddress: sz?.address,
-        distanceToNearest: null, // nessuna distanza all'avvio
+        distanceToNearest: null, // Azzerata all'avvio
         adjacentSafeZones: 0,
       );
     }).toList();
   }
  
-  /// Resetta TUTTE le celle a hidden per un nuovo round.
-  /// Azzera distanceToNearest su ogni cella — fondamentale per il Bug 2:
-  /// senza questo reset le distanze del round precedente restano visibili.
+  /// Resetta lo stato visivo di tutte le celle per iniziare un nuovo round.
+  /// 
+  /// Azzera `distanceToNearest` per evitare che l'utente veda i suggerimenti 
+  /// (colori e numeri) derivanti dal round precedente.
   List<HexCell> resetCellsForNewRound(List<HexCell> cells) {
     return cells.map((c) => c.copyWith(
           state: CellState.hidden,
-          distanceToNearest: null, // <-- reset esplicito distanza
+          distanceToNearest: null, // Reset esplicito della distanza
           adjacentSafeZones: 0,
         )).toList();
   }
  
-  /// Applica il tap su una cella:
-  /// - Cella target → CellState.found, distanceToNearest = 0
-  /// - Cella sbagliata → CellState.revealed, distanceToNearest = distanza BFS dal target
+  /// Elabora l'azione di tocco (tap) su una specifica cella.
   ///
-  /// Restituisce celle aggiornate, se è corretta, e la distanza calcolata.
+  /// Restituisce un record Dart 3.0 contenente:
+  /// - `cells`: L'array aggiornato di celle
+  /// - `isCorrect`: Booleano, true se la cella toccata era il target
+  /// - `distance`: Distanza calcolata (0 se corretto, >0 se errato)
   ({
     List<HexCell> cells,
     bool isCorrect,
@@ -85,7 +93,7 @@ class GameBService {
     required int tappedCellId,
     required int targetCellId,
   }) {
-    // Ignora tap su celle già rivelate o found (distanza già mostrata)
+    // Ignora i tap su celle che sono già state rivelate (l'utente sa già la distanza da lì)
     final tapped = cells.firstWhere((c) => c.id == tappedCellId,
         orElse: () => throw StateError('Cella $tappedCellId non trovata'));
  
@@ -109,7 +117,8 @@ class GameBService {
     return (cells: updatedCells, isCorrect: isCorrect, distance: distance);
   }
  
-  /// Seleziona le safe zone per i round in modo casuale senza ripetizioni.
+  /// Seleziona le aree di attesa target per tutti i round della partita,
+  /// mescolandole casualmente senza ripetizioni.
   List<SafeZone> pickRoundTargets(List<SafeZone> safeZones, int count) {
     final shuffled = List<SafeZone>.from(safeZones)..shuffle();
     return shuffled.take(count).toList();

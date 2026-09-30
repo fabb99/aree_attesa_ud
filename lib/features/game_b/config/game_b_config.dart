@@ -1,3 +1,6 @@
+/// Configurazione centralizzata per il Gioco B (Localizza l'Area).
+/// ///
+/// Modifica questi valori per bilanciare il gameplay.
 class GameBConfig {
   /// Numero di round per partita
   static const int roundsPerGame = 5;

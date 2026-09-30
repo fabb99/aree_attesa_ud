@@ -1,4 +1,6 @@
 /// Configurazione centralizzata per il Gioco A (Campo Fiorito).
+///
+/// Modifica questi valori per bilanciare il gameplay.
 abstract final class GameAConfig {
   /// Raggio dell'esagono in metri (definisce la dimensione della griglia).
   static const double hexRadiusMeters = 183;
