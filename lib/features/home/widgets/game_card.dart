@@ -1,7 +1,11 @@
-import 'package:aree_attesa_ud/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 
+/// Card interattiva utilizzata nella Home per lanciare i mini-giochi.
+/// 
+/// Gestisce un'animazione di scala al tap (effetto "premuto") e incapsula
+/// l'estetica specifica del gioco (colori, icone e testi) tramite parametri.
 class GameCard extends StatefulWidget {
   final String label;
   final String title;
@@ -223,10 +227,12 @@ class _CardActions extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Gioca', style: AppTextStyles.button.copyWith(
-                      fontSize: 14,
-                      color: AppColors.onColored, // sempre bianco su sfondo colorato
-                  ),
+              Text(
+                'Gioca', 
+                style: AppTextStyles.button.copyWith(
+                  fontSize: 14,
+                  color: AppColors.onColored, 
+                ),
               ),
               const SizedBox(width: 6),
               const Icon(Icons.arrow_forward, color: Colors.white, size: 16),

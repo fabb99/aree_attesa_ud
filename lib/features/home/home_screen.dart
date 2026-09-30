@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:riverpod/riverpod.dart';
+
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../game_a/screens/game_a_screen.dart';
 import '../game_b/screens/game_b_screen.dart';
 import '../game_c/screens/game_c_screen.dart';
-import 'widgets/game_card.dart';
-import 'widgets/home_header.dart';
-import 'widgets/preparati_card.dart';
 import 'guide_screen.dart';
 import 'onboarding_screen.dart';
+import 'widgets/game_card.dart';
+import 'widgets/preparati_card.dart';
+import 'widgets/sonar_wave_header.dart'; // Import aggiornato dopo lo spostamento
 
-import 'widgets/sonar_wave_header.dart';
-
-
-
-//-----------VECCHIA VERSIONE------------------------
-
+/// Schermata principale dell'applicazione.
+///
+/// Funge da hub centrale: gestisce la visualizzazione automatica dell'onboarding
+/// al primo avvio e permette all'utente di accedere alle tre modalità di gioco
+/// o alla guida interattiva.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -28,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    // Controlla se è il primo avvio subito dopo il rendering del primo frame
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkOnboarding());
   }
 
@@ -65,13 +65,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgDeep, // Sfondo grigio/bianco chiaro
+      backgroundColor: AppColors.bgDeep, 
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            
-            // ─── ZONA ONDA (Solo Logo e Titolo) ─────────────────────────────
+            // ─── ZONA HEADER (Onda Sonar) ───────────────────────────────────
             SonarWaveHeader(
               child: SafeArea(
                 bottom: false,
@@ -80,9 +79,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // LOGO
+                      // Logo
                       Container(
-                        width: 150, // Ridotto leggermente per bilanciarlo nell'header stretto
+                        width: 150,
                         height: 150,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
@@ -96,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      // TITOLO BIANCO SUL BLU
+                      // Titolo
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,7 +104,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               'Aree Attesa UD', 
                               style: AppTextStyles.heading3App.copyWith(color: AppColors.white),
                             ),
-                          
                           ],
                         ),
                       ),
@@ -115,13 +113,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            // ─── ZONA BIANCA (Descrizione, Preparati, Giochi) ───────────────
+            // ─── ZONA CONTENUTI ─────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Testi principali con il colore scuro del tema Light
                   const Text('Impara a conoscere\nla tua città', style: AppTextStyles.heading1),
                   const SizedBox(height: 12),
                   const Text(
@@ -130,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     'ti aiuta a essere pront@ in caso di emergenza!\n\n'
                     'Tre giochi per esplorare le aree di attesa '
                     'della Protezione Civile di Udine.',
-                    style: AppTextStyles.body, // Assicurati che qui ci sia "body" e non "bodyWhite"
+                    style: AppTextStyles.body,
                   ),
                   
                   const SizedBox(height: 24),
@@ -140,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Text('SCEGLI LA MODALITÀ', style: AppTextStyles.labelAccent),
                   const SizedBox(height: 16),
                   
-                  // --- Le tue 3 GameCard qui (esattamente come le avevi prima) ---
+                  // ─── Cards dei mini-giochi ────────────────────────────────
                   SizedBox(
                     height: 260,
                     child: GameCard(
@@ -188,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
-                  // Footer
+                  // ─── Footer ───────────────────────────────────────────────
                   const SizedBox(height: 24),
                   Center(
                     child: RichText(
@@ -212,106 +209,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-
-  @override
-  Widget build1(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.bgDeep,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const HomeHeader(),
-              const SizedBox(height: 24),
-              PreparatiCard(onTap: () => _openOnboarding()),
-              const SizedBox(height: 32),
-              const Text('SCEGLI LA MODALITÀ', style: AppTextStyles.labelAccent),
-              const SizedBox(height: 16),
-              SizedBox(
-                height: 260,
-                child: GameCard(
-                  label: 'GIOCO A',
-                  title: 'Campo\nFiorito',
-                  description:
-                      'Esplora la mappa di Udine e scopri le aree di attesa '
-                      'della Protezione Civile. Usa i colori come guida.',
-                  icon: Icons.grid_on_rounded,
-                  accentColor: AppColors.gameA,
-                  highlightColor: AppColors.gameALight,
-                  badgeText: '🌸 Esplora',
-                  onTap: () => _navigate(const GameAScreen()),
-                  onGuide: () => _openGuide(0),
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                height: 260,
-                child: GameCard(
-                  label: 'GIOCO B',
-                  title: 'Localizza\nl\'Area',
-                  description:
-                      'Ti viene mostrato il nome di un\'area di attesa: '
-                      'indovina dove si trova cliccando sulla mappa esagonale.',
-                  icon: Icons.my_location_rounded,
-                  accentColor: AppColors.gameB,
-                  highlightColor: AppColors.gameBLight,
-                  badgeText: '📍 Localizza',
-                  onTap: () => _navigate(const GameBScreen()),
-                  onGuide: () => _openGuide(1),
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                height: 260,
-                child: GameCard(
-                  label: 'GIOCO C',
-                  title: 'GeoGuesser\nUdine',
-                  description:
-                      'Osserva le foto di un\'area di attesa e posiziona '
-                      'un pin sulla mappa nel punto più vicino possibile.',
-                  icon: Icons.photo_camera_outlined,
-                  accentColor: AppColors.gameC,
-                  highlightColor: AppColors.gameCLight,
-                  badgeText: '📸 GeoGuesser',
-                  onTap: () => _navigate(const GameCScreen()),
-                  onGuide: () => _openGuide(2),
-                ),
-              ),
-
-             
-
-
-              const SizedBox(height: 24),
-              Center(
-                child: RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Sviluppata da Alessandro Fabbri per l\'Università di Udine\n',
-                        style: AppTextStyles.caption.copyWith(fontSize: 10, color: Color(0xFF9999BB)) // grigio chiaro
-,
-                      ),
-                      TextSpan(
-                        text: '© OpenStreetMap contributors · Dati: Protezione Civile FVG',
-                        style: AppTextStyles.caption.copyWith(
-                          fontSize: 10,
-                           color: Color(0xFF9999BB),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 
+/// Card interattiva (Call to Action) mostrata nella Home.
+/// 
+/// Premendola, l'utente può riaprire il flusso di Onboarding per rileggere
+/// i contenuti educativi. Gestisce un'animazione di scala per il feedback tattile.
 class PreparatiCard extends StatefulWidget {
   final VoidCallback onTap;
 
@@ -31,7 +35,7 @@ class _PreparatiCardState extends State<PreparatiCard> {
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors:[AppColors.accent, AppColors.accentDark],// [AppColors.alertRedDeep, AppColors.alertRedDark],
+              colors: [AppColors.accent, AppColors.accentDark],
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
             ),
@@ -46,6 +50,7 @@ class _PreparatiCardState extends State<PreparatiCard> {
           ),
           child: Row(
             children: [
+              // Icona sinistra
               Container(
                 width: 44,
                 height: 44,
@@ -60,6 +65,8 @@ class _PreparatiCardState extends State<PreparatiCard> {
                 ),
               ),
               const SizedBox(width: 14),
+              
+              // Testi
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,20 +75,21 @@ class _PreparatiCardState extends State<PreparatiCard> {
                       'Preparati all\'emergenza',
                       style: AppTextStyles.button.copyWith(
                         fontSize: 15,
-                        color: AppColors.onColored, // fisso bianco
+                        color: AppColors.onColored, 
                       ),
                     ),
                     const SizedBox(height: 2),
                      Text(
-                      //'Cosa fare in caso di terremoto ·
                       'Le aree di attesa',
                       style: AppTextStyles.caption.copyWith(
-                        color: AppColors.onColored.withAlpha(178), // bianco attenuato
+                        color: AppColors.onColored.withAlpha(178), 
                       ),
                     ),
                   ],
                 ),
               ),
+              
+              // Freccia destra
               const Icon(
                 Icons.arrow_forward_ios_rounded,
                 color: Colors.white54,

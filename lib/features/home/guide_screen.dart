@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 
-/// Schermata guida ai giochi — accessibile dalla Home tramite icona "?".
-/// Self-contained: nessun provider, nessuna dipendenza esterna.
+/// Schermata con la guida interattiva per i tre mini-giochi.
+/// 
+/// Gestita tramite un [TabBar] nativo. È completamente self-contained, 
+/// non richiede state management ed è guidata dai dati tramite [_GuideConfig].
 class GuideScreen extends StatefulWidget {
-  const GuideScreen({super.key, this.initialIndex = 0});
   final int initialIndex;
+  
+  const GuideScreen({super.key, this.initialIndex = 0});
 
   @override
   State<GuideScreen> createState() => _GuideScreenState();
@@ -18,8 +21,11 @@ class _GuideScreenState extends State<GuideScreen>
   @override
   void initState() {
     super.initState();
-    //_tabController = TabController(length: 3, vsync: this);
-    _tabController = TabController(length: 3, vsync: this, initialIndex: widget.initialIndex);
+    _tabController = TabController(
+      length: 3, 
+      vsync: this, 
+      initialIndex: widget.initialIndex,
+    );
   }
 
   @override
@@ -31,10 +37,10 @@ class _GuideScreenState extends State<GuideScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:AppColors.bgCard,////<<-- E QUI LO SFONDO 
+      backgroundColor: AppColors.bgCard,
       appBar: AppBar(
-        backgroundColor:AppColors.bgDeep, //AppColors.bgCard,
-        foregroundColor:AppColors.textPrimary,//AppColors.primaryDark,
+        backgroundColor: AppColors.bgDeep, 
+        foregroundColor: AppColors.textPrimary,
         elevation: 0,
         title: const Text(
           'Come si gioca',
@@ -49,8 +55,7 @@ class _GuideScreenState extends State<GuideScreen>
           indicatorColor: AppColors.textPrimary,
           indicatorWeight: 2,
           labelColor: AppColors.textPrimary,
-          unselectedLabelColor: Color(0xFF9999BB),// grigio chiaro
-// AppColors.textDisabled,
+          unselectedLabelColor: AppColors.textDisabled, 
           labelStyle: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w700,
@@ -93,11 +98,9 @@ class _GameGuideTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Header gioco ───────────────────────────────────────────
           _GameHeader(config: config),
           const SizedBox(height: 32),
 
-          // ── Obiettivo ─────────────────────────────────────────────
           _Section(
             icon: Icons.flag_rounded,
             title: 'OBIETTIVO',
@@ -106,7 +109,6 @@ class _GameGuideTab extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // ── Come si gioca ─────────────────────────────────────────
           _Section(
             icon: Icons.touch_app_rounded,
             title: 'COME SI GIOCA',
@@ -125,7 +127,6 @@ class _GameGuideTab extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // ── Legenda colori (solo se presente) ─────────────────────
           if (config.legend != null) ...[
             _Section(
               icon: Icons.palette_outlined,
@@ -140,7 +141,6 @@ class _GameGuideTab extends StatelessWidget {
             const SizedBox(height: 24),
           ],
 
-          // ── Punteggio ─────────────────────────────────────────────
           _Section(
             icon: Icons.star_rounded,
             title: 'PUNTEGGIO',
@@ -149,7 +149,6 @@ class _GameGuideTab extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // ── Suggerimento ──────────────────────────────────────────
           _TipCard(tip: config.tip, accentColor: config.accentColor),
         ],
       ),
@@ -161,7 +160,6 @@ class _GameGuideTab extends StatelessWidget {
 
 class _GameHeader extends StatelessWidget {
   final _GuideConfig config;
-
   const _GameHeader({required this.config});
 
   @override
@@ -169,7 +167,6 @@ class _GameHeader extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Icona
         Container(
           width: 56,
           height: 56,
@@ -181,11 +178,7 @@ class _GameHeader extends StatelessWidget {
               width: 1.5,
             ),
           ),
-          child: Icon(
-            config.icon,
-            color: config.accentColor,
-            size: 28,
-          ),
+          child: Icon(config.icon, color: config.accentColor, size: 28),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -228,7 +221,6 @@ class _GameHeader extends StatelessWidget {
   }
 }
 
-/// Sezione con titolo e icona.
 class _Section extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -247,7 +239,6 @@ class _Section extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Titolo sezione
         Row(
           children: [
             Icon(icon, color: accentColor, size: 14),
@@ -264,7 +255,6 @@ class _Section extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        // Contenuto con bordo sinistro
         IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -286,7 +276,6 @@ class _Section extends StatelessWidget {
   }
 }
 
-/// Riga numerata per i passi di gioco.
 class _StepRow extends StatelessWidget {
   final int number;
   final String text;
@@ -305,7 +294,6 @@ class _StepRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Numero step
           Container(
             width: 22,
             height: 22,
@@ -345,10 +333,8 @@ class _StepRow extends StatelessWidget {
   }
 }
 
-/// Riga legenda colori.
 class _LegendRow extends StatelessWidget {
   final _LegendEntry entry;
-
   const _LegendRow({required this.entry});
 
   @override
@@ -382,10 +368,8 @@ class _LegendRow extends StatelessWidget {
   }
 }
 
-/// Testo paragrafo standard.
 class _ParagraphText extends StatelessWidget {
   final String text;
-
   const _ParagraphText(this.text);
 
   @override
@@ -401,11 +385,9 @@ class _ParagraphText extends StatelessWidget {
   }
 }
 
-/// Card suggerimento in fondo alla guida.
 class _TipCard extends StatelessWidget {
   final String tip;
   final Color accentColor;
-
   const _TipCard({required this.tip, required this.accentColor});
 
   @override
@@ -470,7 +452,6 @@ class _GuideConfig {
 class _LegendEntry {
   final Color color;
   final String label;
-
   const _LegendEntry({required this.color, required this.label});
 }
 
@@ -494,13 +475,6 @@ const _gameAGuide = _GuideConfig(
     'Hai 100 mosse a disposizione: usale con strategia!',
     'Premi "Fine" per terminare anticipatamente e vedere tutte le aree rimanenti.',
   ],
-  // legend: [
-  //   _LegendEntry(color: AppColors.safeFound, label: 'Area di attesa trovata'),
-  //   _LegendEntry(color: AppColors.dist1, label: 'Distanza 1 — area adiacente'),
-  //   _LegendEntry(color: AppColors.dist2, label: 'Distanza 2 — area vicina'),
-  //   _LegendEntry(color: AppColors.dist3, label: 'Distanza 3 — area nella zona'),
-  //   _LegendEntry(color: AppColors.distFar, label: 'Distanza 4+ — area lontana'),
-  // ],
   legend: [
     _LegendEntry(color: AppColors.safeFound, label: 'Area di attesa trovata'),
     _LegendEntry(color: AppColors.dist1, label: 'Area adiacente'),
