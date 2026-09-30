@@ -2,23 +2,23 @@ import 'dart:collection';
 import '../../../core/models/hex_cell.dart';
 import '../../../core/models/safe_zone.dart';
 
-/// Logica pura del Gioco A: inizializzazione griglia, BFS distanze, gestione tap.
-///
-/// Questa classe non dipende da Flutter né da Riverpod — è testabile in isolamento.
+/// Logica pura (Business Logic) del Gioco A.
 class GameAService {
+  static const int _infinity = 9999;
 
   // ── Inizializzazione ──────────────────────────────────────────────────────
 
-  /// Prepara la lista iniziale di celle con distanze e flag safe zone.
+  /// Prepara la lista iniziale di celle popolando distanze e attributi.
   ///
-  /// Esegue un BFS multi-sorgente da tutte le safe zone contemporaneamente
-  /// per calcolare la distanza minima di ogni cella in O(N) invece di
-  /// eseguire un BFS separato per ogni safe zone.
-  /// Tutte le celle partono in stato [CellState.hidden].
+  /// **Algoritmo**: Esegue una **Breadth-First Search (BFS) multi-sorgente** 
+  /// partendo simultaneamente da tutte le Safe Zone. Questo calcola la distanza 
+  /// minima di ogni cella in O(V+E), risultando estremamente più performante 
+  /// rispetto all'esecuzione di una BFS separata per ogni singola area.
   List<HexCell> initializeCells(
     List<HexCell> rawCells,
     List<SafeZone> safeZones,
   ) {
+    // Mappa per un accesso rapido O(1) agli indici delle celle
     final idToIndex = <int, int>{
       for (int i = 0; i < rawCells.length; i++) rawCells[i].id: i,
     };
@@ -26,10 +26,11 @@ class GameAService {
     final safeZoneCellIds = {for (final sz in safeZones) sz.cellId};
     final safeZoneByCell  = {for (final sz in safeZones) sz.cellId: sz};
 
-    // BFS multi-sorgente: distanza minima da qualsiasi safe zone
+    // BFS Multi-sorgente
     final distances = List<int>.filled(rawCells.length, _infinity);
     final queue = Queue<int>();
 
+    // 1. Inserisce in coda tutte le "sorgenti" (le aree di attesa) a distanza 0
     for (final cellId in safeZoneCellIds) {
       final idx = idToIndex[cellId];
       if (idx != null) {
@@ -38,6 +39,7 @@ class GameAService {
       }
     }
 
+    // 2. Espansione dell'onda BFS
     while (queue.isNotEmpty) {
       final currentId  = queue.removeFirst();
       final currentIdx = idToIndex[currentId]!;
@@ -46,6 +48,8 @@ class GameAService {
       for (final neighborId in rawCells[currentIdx].neighbors) {
         final neighborIdx = idToIndex[neighborId];
         if (neighborIdx == null) continue;
+        
+        // Se troviamo un percorso più breve, aggiorniamo e accodiamo
         if (distances[neighborIdx] > nextDist) {
           distances[neighborIdx] = nextDist;
           queue.add(neighborId);
@@ -53,7 +57,7 @@ class GameAService {
       }
     }
 
-    // Conta le safe zone adiacenti (distanza 1) per ogni cella
+    // Conta le safe zone adiacenti (distanza 1) per ogni cella (Meccanica in stile Campo Minato)
     final adjacentCounts = List<int>.filled(rawCells.length, 0);
     for (int i = 0; i < rawCells.length; i++) {
       adjacentCounts[i] = rawCells[i].neighbors
@@ -61,6 +65,7 @@ class GameAService {
           .length;
     }
 
+    // Genera l'array finale di celle valorizzate
     return [
       for (int i = 0; i < rawCells.length; i++)
         rawCells[i].copyWith(
@@ -74,17 +79,11 @@ class GameAService {
     ];
   }
 
-  // ── Tap ───────────────────────────────────────────────────────────────────
+  // ── Gestione Interazione (Tap) ────────────────────────────────────────────
 
-  /// Gestisce il tap su una cella e restituisce il nuovo stato completo.
+  /// Calcola il risultato di un tap su una cella.
   ///
-  /// Responsabilità di questo metodo (logica di business, non UI):
-  /// - Cambiare lo stato della cella toccata (hidden → revealed/found)
-  /// - Calcolare il numero di mosse rimanenti
-  /// - Contare le safe zone trovate
-  /// - Rivelare le safe zone rimanenti se le mosse si esauriscono
-  ///
-  /// Il notifier si limita a leggere [TapResult] e aggiornare lo state.
+  /// Restituisce un oggetto tipizzato [TapResult] contenente lo stato aggiornato.
   TapResult tapCell({
     required List<HexCell> cells,
     required int cellId,
@@ -98,16 +97,17 @@ class GameAService {
 
     final cell = cells[idx];
 
-    // Tap su cella già rivelata (non safe zone): no-op
+    // Se la cella è già rivelata e NON è una safe zone, non fa nulla
     if (cell.state != CellState.hidden && !cell.isSafeZone) {
       return TapResult.noOp(cells: cells, movesLeft: movesLeft, foundSafeZones: foundSafeZones);
     }
 
-    // Tap su safe zone già trovata: no-op (ma la UI può mostrare il banner)
+    // Se è una safe zone già trovata, non scala mosse
     if (cell.state == CellState.found) {
       return TapResult.noOp(cells: cells, movesLeft: movesLeft, foundSafeZones: foundSafeZones);
     }
 
+    // Calcolo del nuovo stato
     final newCellState   = cell.isSafeZone ? CellState.found : CellState.revealed;
     final foundSafeZone  = cell.isSafeZone;
     final newMovesLeft   = movesLeft - 1;
@@ -117,7 +117,7 @@ class GameAService {
     var updatedCells = List<HexCell>.from(cells);
     updatedCells[idx] = cell.copyWith(state: newCellState);
 
-    // Se le mosse sono esaurite, rivela tutte le safe zone ancora nascoste
+    // Se il gioco finisce (mosse esaurite), rivela le aree non trovate (game over)
     if (isFinished) {
       updatedCells = updatedCells.map((c) {
         if (c.isSafeZone && c.state == CellState.hidden) {
@@ -135,18 +135,14 @@ class GameAService {
       isFinished:      isFinished,
     );
   }
-
-  // ── Costanti private ──────────────────────────────────────────────────────
-
-  static const int _infinity = 9999;
 }
 
-// ── Result object ─────────────────────────────────────────────────────────────
+// ── Oggetti di Ritorno ────────────────────────────────────────────────────────
 
-/// Risultato di un tap su una cella nel Gioco A.
-///
-/// Usare un oggetto dedicato invece di un record anonimo rende
-/// il codice più leggibile e il contratto del metodo esplicito.
+/// Struttura dati (Data Transfer Object) che incapsula il risultato di una mossa.
+/// 
+/// Utilizzare una classe esplicita invece di tuple o record rende il codice
+/// molto più leggibile e il contratto del metodo esplicito e sicuro.
 class TapResult {
   final List<HexCell> cells;
   final int movesLeft;
@@ -162,7 +158,7 @@ class TapResult {
     required this.isFinished,
   });
 
-  /// Costruttore per il caso in cui il tap non produce nessun cambiamento.
+  /// Costruttore di convenienza per mosse nulle (no-op).
   factory TapResult.noOp({
     required List<HexCell> cells,
     required int movesLeft,

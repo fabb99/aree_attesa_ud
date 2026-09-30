@@ -49,7 +49,7 @@ class _HeaderWavePainter extends CustomPainter {
   /// 
   /// [upOffset] solleva verticalmente il tracciato per rivelare le onde sottostanti.
   void _drawWave(Canvas canvas, Size size, double upOffset, Color color) {
-    final waveHeight = 35.0; // Profondità della curva
+    const waveHeight = 35.0; // Profondità della curva
     final path = Path();
 
     // Partiamo da in alto a sinistra e scendiamo
