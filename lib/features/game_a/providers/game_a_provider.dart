@@ -1,22 +1,29 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import '../config/game_a_config.dart';
 import '../../../core/data/grid_repository.dart';
 import '../../../core/data/safe_zone_repository.dart';
+import '../config/game_a_config.dart';
 import '../models/game_a_state.dart';
 import '../../../core/models/hex_cell.dart';
 import '../services/game_a_service.dart';
 
+// Esportiamo i provider di base per comodità di importazione nelle schermate.
 export '../../../core/providers/app_providers.dart'
     show gridRepositoryProvider, safeZoneRepositoryProvider;
 
-// ─── Game A notifier ─────────────────────────────────────────────────────────
-
+/// Gestore dello stato (Notifier) per il Gioco A.
+///
+/// Funge da Controller nell'architettura MVC/MVVM:
+/// - Riceve gli input dalla UI (es. [tapCell]).
+/// - Delega i calcoli complessi al [GameAService].
+/// - Aggiorna lo stato immutabile, notificando la UI per il rebuild.
 class GameANotifier extends StateNotifier<GameAState> {
   GameANotifier() : super(GameAState.initial());
 
   GameAService? _service;
 
+  /// Inizializza la partita caricando la griglia e calcolando le distanze BFS.
   Future<void> initGame({
     required GridRepository gridRepo,
     required SafeZoneRepository szRepo,
@@ -40,19 +47,19 @@ class GameANotifier extends StateNotifier<GameAState> {
         phase: GameAPhase.playing,
       );
     } catch (e, stack) {
-      // ignore: avoid_print
-      print('[GameA] Errore caricamento dati: $e\n$stack');
+      debugPrint('[GameA] Errore caricamento dati: $e\n$stack');
       rethrow;
     }
   }
 
+  /// Gestisce il tocco dell'utente su un esagono della mappa.
   void tapCell(int cellId) {
     final cell = state.cells.firstWhere(
       (c) => c.id == cellId,
-      orElse: () => throw StateError('Cell $cellId not found'),
+      orElse: () => throw StateError('Cella $cellId non trovata'),
     );
 
-    // Gioco terminato: mostra solo il banner informativo
+    // Se il gioco è finito, permette solo di visualizzare i banner informativi
     if (state.phase != GameAPhase.playing) {
       if (cell.isSafeZone) {
         state = state.copyWith(
@@ -63,6 +70,7 @@ class GameANotifier extends StateNotifier<GameAState> {
       return;
     }
 
+    // Delega la logica di business al Service
     final result = _service!.tapCell(
       cells: state.cells,
       cellId: cellId,
@@ -70,30 +78,27 @@ class GameANotifier extends StateNotifier<GameAState> {
       foundSafeZones: state.foundSafeZones,
     );
 
-    // ── Logica tip ────────────────────────────────────────────────────────────
-    // Una mossa "sbagliata" è un tap su cella normale (non safe zone) che
-    // produce un cambiamento di stato (non un no-op su cella già rivelata).
-    // result.foundSafeZone == false E result.movesLeft < state.movesLeft
-    // significa che è stata consumata una mossa su cella normale.
-    final isWrongTap = !result.foundSafeZone &&
-        result.movesLeft < state.movesLeft; // mossa consumata, non safe zone
+    // ── Logica Suggerimenti (Tips) ──────────────────────────────────────────
+    // Consideriamo "sbagliato" un tap che consuma una mossa ma non trova un'area.
+    final isWrongTap = !result.foundSafeZone && result.movesLeft < state.movesLeft; 
 
     int newWrongTaps = state.wrongTapsSinceLastTip;
     bool shouldShowTip = false;
 
     if (isWrongTap) {
       newWrongTaps += 1;
+      // Mostra un suggerimento se l'utente sbaglia ripetutamente
       if (newWrongTaps >= GameAConfig.wrongTapsPerTip) {
         shouldShowTip = true;
-        newWrongTaps = 0; // reset contatore
+        newWrongTaps = 0; // Reset contatore
       }
     } else if (result.foundSafeZone) {
-      // Trovata una safe zone: reset del contatore (le mosse "buone" non
-      // devono accumulare verso la prossima tip — logica "non consecutive")
+      // Un successo resetta la frustrazione dell'utente, quindi azzeriamo i tap sbagliati
       newWrongTaps = 0;
     }
-    // ─────────────────────────────────────────────────────────────────────────
+    // ────────────────────────────────────────────────────────────────────────
 
+    // Aggiornamento finale dello stato
     state = state.copyWith(
       cells: result.cells,
       movesLeft: result.movesLeft,
@@ -106,11 +111,12 @@ class GameANotifier extends StateNotifier<GameAState> {
     );
   }
 
-  /// Chiamato dalla screen dopo aver mostrato la tip, per abbassare il flag.
+  /// Disattiva il flag per la visualizzazione della tip (chiamato dalla UI dopo il render).
   void clearShowTip() {
     state = state.copyWith(showTip: false);
   }
 
+  /// Forza la conclusione della partita, rivelando le aree non trovate.
   void endGame() {
     if (state.phase != GameAPhase.playing) return;
 
@@ -128,10 +134,12 @@ class GameANotifier extends StateNotifier<GameAState> {
     );
   }
 
+  /// Chiude il banner dell'ultima area trovata.
   void clearLastFound() {
     state = state.copyWith(clearLastFound: true);
   }
 
+  /// Risolve una coordinata geografica nell'ID della cella corrispondente.
   int? findCellAtPoint(LatLng point) {
     for (final cell in state.cells) {
       if (cell.containsPoint(point)) return cell.id;
@@ -142,6 +150,8 @@ class GameANotifier extends StateNotifier<GameAState> {
 
 // ─── Provider ────────────────────────────────────────────────────────────────
 
+/// Provider `autoDispose` per garantire la pulizia della memoria:
+/// Quando l'utente esce dalla schermata, lo stato si resetta automaticamente.
 final gameAProvider =
     StateNotifierProvider.autoDispose<GameANotifier, GameAState>(
         (ref) => GameANotifier());

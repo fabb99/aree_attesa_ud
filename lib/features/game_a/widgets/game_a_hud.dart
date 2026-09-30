@@ -3,6 +3,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/ui/app_hud_chip.dart';
 import '../models/game_a_state.dart';
 
+/// Pannello di controllo (Heads-Up Display) per il Gioco A.
+/// Mostra mosse rimanenti, aree trovate e punteggio in tempo reale.
 class GameAHud extends StatelessWidget {
   final GameAState state;
   final VoidCallback onEndGame;
@@ -43,6 +45,8 @@ class GameAHud extends StatelessWidget {
     );
   }
 
+  /// Cambia il colore delle mosse rimanenti in base alla percentuale 
+  /// (Verde -> Giallo -> Rosso) per aumentare la tensione ludica.
   Color _movesColor(int left, int total) {
     if (total == 0) return AppColors.textPrimary;
     final ratio = left / total;

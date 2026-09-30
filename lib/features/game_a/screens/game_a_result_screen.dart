@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
+
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/map/hex_grid_layer.dart';
 import '../../../core/widgets/ui/app_score_ring.dart';
-import '../widgets/found_zone_banner.dart';
+import '../../../core/models/hex_cell.dart';
 import '../models/game_a_state.dart';
 import '../providers/game_a_provider.dart';
-import '../../../core/models/hex_cell.dart';
+import '../widgets/found_zone_banner.dart'; // Import corretto dalla feature
 import 'game_a_screen.dart';
 
+/// Schermata di riepilogo al termine del Gioco A.
+/// Mostra la mappa completa con le aree scoperte/non scoperte e il punteggio.
 class GameAResultScreen extends ConsumerStatefulWidget {
   const GameAResultScreen({super.key});
 
@@ -27,6 +30,7 @@ class _GameAResultScreenState extends ConsumerState<GameAResultScreen> {
   void _onMapTap(TapPosition tapPos, LatLng latLng) {
     final notifier = ref.read(gameAProvider.notifier);
     final cellId = notifier.findCellAtPoint(latLng);
+    // Permette all'utente di cliccare le aree scoperte per leggerne i dettagli
     if (cellId != null) notifier.tapCell(cellId);
   }
 
@@ -40,7 +44,7 @@ class _GameAResultScreenState extends ConsumerState<GameAResultScreen> {
         backgroundColor: AppColors.bgDeep,
         body: Stack(
           children: [
-            // ── Mappa ────────────────────────────────────────────────
+            // ── Mappa di Sfondo ─────────────────────────────────────────
             FlutterMap(
               mapController: _mapController,
               options: MapOptions(
@@ -58,8 +62,7 @@ class _GameAResultScreenState extends ConsumerState<GameAResultScreen> {
               ),
               children: [
                 TileLayer(
-                  urlTemplate:
-                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.punti_sicuri_ud',
                 ),
                 if (_currentCamera != null)
@@ -73,7 +76,7 @@ class _GameAResultScreenState extends ConsumerState<GameAResultScreen> {
               ],
             ),
 
-            // ── Pannello risultati ────────────────────────────────────
+            // ── Pannello Punteggio Inferiore ────────────────────────────
             Positioned(
               bottom: 0,
               left: 0,
@@ -85,14 +88,13 @@ class _GameAResultScreenState extends ConsumerState<GameAResultScreen> {
               ),
             ),
 
-            // ── Banner area trovata ───────────────────────────────────
+            // ── Dettaglio Area Selezionata ──────────────────────────────
             if (gameState.lastFoundName != null)
               FoundZoneBanner(
-                safeZoneId: gameState.safeZones.firstWhere((sz) => sz.name == gameState.lastFoundName).id,
                 name: gameState.lastFoundName!,
                 address: gameState.lastFoundAddress ?? '',
-                onDismiss: () =>
-                    ref.read(gameAProvider.notifier).clearLastFound(),
+                safeZoneId: gameState.safeZones.firstWhere((sz) => sz.name == gameState.lastFoundName).id,
+                onDismiss: () => ref.read(gameAProvider.notifier).clearLastFound(),
               ),
           ],
         ),
@@ -100,11 +102,14 @@ class _GameAResultScreenState extends ConsumerState<GameAResultScreen> {
     );
   }
 
+  /// Costruisce i marker (Pin di mappa) per tutte le aree di attesa.
+  /// Verde = Trovata dall'utente, Rosso = Non trovata.
   List<Marker> _buildMarkers(GameAState state) {
     return state.safeZones.map((sz) {
       final found = state.cells.any(
         (c) => c.id == sz.cellId && c.state == CellState.found,
       );
+      
       return Marker(
         point: sz.position,
         width: 36,
@@ -112,8 +117,7 @@ class _GameAResultScreenState extends ConsumerState<GameAResultScreen> {
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            final cellId =
-                state.cells.firstWhere((c) => c.id == sz.cellId).id;
+            final cellId = state.cells.firstWhere((c) => c.id == sz.cellId).id;
             ref.read(gameAProvider.notifier).tapCell(cellId);
           },
           child: Icon(
@@ -139,7 +143,7 @@ class _GameAResultScreenState extends ConsumerState<GameAResultScreen> {
   }
 }
 
-// ── Pannello risultati ────────────────────────────────────────────────────────
+// ── Pannello Risultati ────────────────────────────────────────────────────────
 
 class _ResultPanel extends StatelessWidget {
   final GameAState gameState;
@@ -160,10 +164,7 @@ class _ResultPanel extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.fromLTRB(
-        24,
-        20,
-        24,
-        MediaQuery.of(context).padding.bottom + 24,
+        24, 20, 24, MediaQuery.of(context).padding.bottom + 24,
       ),
       decoration: const BoxDecoration(
         color: AppColors.bgCard,
@@ -175,7 +176,10 @@ class _ResultPanel extends StatelessWidget {
         children: [
           AppScoreRing(value: score, maxValue: 100),
           const SizedBox(height: 12),
-          Text(_scoreLabel(score), style: AppTextStyles.heading3.copyWith(color: AppColors.textSecondary)),
+          Text(
+            _scoreLabel(score), 
+            style: AppTextStyles.heading3.copyWith(color: AppColors.textSecondary)
+          ),
           const SizedBox(height: 4),
           Text(
             'Hai trovato $found su $total aree di attesa',
@@ -204,14 +208,15 @@ class _ResultPanel extends StatelessWidget {
   }
 
   String _scoreLabel(int score) {
-    if (score >= 80) return '🏆 Eccellente!';
-    if (score >= 50) return '👍 Buon lavoro!';
-    if (score >= 25) return '📚 Continua a imparare!';
-    return '🗺️ Esplora ancora la città!';
+    if (score >= 75) return 'Ottimo';
+    if (score >= 50) return 'Eccellente!';
+    if (score >= 25) return 'Buon lavoro!';
+    if (score >= 15) return 'Continua a imparare!';
+    return 'Esplora ancora la città!';
   }
 }
 
-// ── Bottone azione ────────────────────────────────────────────────────────────
+// ── Bottone di Azione ─────────────────────────────────────────────────────────
 
 class _ActionButton extends StatelessWidget {
   final IconData icon;

@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
+
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/widgets/ui/app_end_game_dialog.dart';
 import '../../../core/widgets/map/hex_grid_layer.dart';
-import '../widgets/found_zone_banner.dart';
-import '../../../core/widgets/ui/tip_banner.dart';        // ← nuovo
-import '../../../core/widgets/ui/app_tips.dart';           // ← nuovo
+import '../../../core/widgets/ui/app_end_game_dialog.dart';
+import '../../../core/widgets/ui/app_tips.dart';
+import '../../../core/widgets/ui/tip_banner.dart';
 import '../models/game_a_state.dart';
 import '../providers/game_a_provider.dart';
 import '../widgets/game_a_hud.dart';
+import '../widgets/found_zone_banner.dart'; // Import corretto dalla feature
 import 'game_a_result_screen.dart';
 
+/// Schermata principale del "Gioco A - Campo Fiorito".
 class GameAScreen extends ConsumerStatefulWidget {
   const GameAScreen({super.key});
 
@@ -25,13 +27,14 @@ class _GameAScreenState extends ConsumerState<GameAScreen> {
   final MapController _mapController = MapController();
   MapCamera? _currentCamera;
 
-  // ── Tip state (locale alla screen, non serve nel provider) ────────────────
+  // Stato locale per i banner di suggerimento 
   AppTip? _activeTip;
-  String? _lastTipId; // per non ripetere la stessa tip due volte di fila
+  String? _lastTipId;
 
   @override
   void initState() {
     super.initState();
+    // Inizializza il gioco subito dopo il primo render frame
     Future.microtask(() => _startGame());
   }
 
@@ -58,7 +61,7 @@ class _GameAScreenState extends ConsumerState<GameAScreen> {
     final cellId = notifier.findCellAtPoint(latLng);
     if (cellId != null) notifier.tapCell(cellId);
 
-    // Controlla se il notifier ha alzato il flag showTip
+    // Controlla se il notifier ha richiesto l'attivazione di un suggerimento
     final newState = ref.read(gameAProvider);
     if (newState.showTip) {
       _showTip();
@@ -86,12 +89,13 @@ class _GameAScreenState extends ConsumerState<GameAScreen> {
   Widget build(BuildContext context) {
     final gameState = ref.watch(gameAProvider);
 
+    // PopScope impedisce l'uscita accidentale dalla partita tramite il tasto back
     return PopScope(
       canPop: false,
       child: Scaffold(
         body: Stack(
           children: [
-            // ── Mappa ────────────────────────────────────────────────
+            // ── Mappa di Sfondo (OpenStreetMap) ─────────────────────────
             FlutterMap(
               mapController: _mapController,
               options: MapOptions(
@@ -111,16 +115,14 @@ class _GameAScreenState extends ConsumerState<GameAScreen> {
               ),
               children: [
                 TileLayer(
-                  urlTemplate:
-                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.punti_sicuri_ud',
                 ),
               ],
             ),
 
-            // ── Griglia esagonale ────────────────────────────────────
-            if (_currentCamera != null &&
-                gameState.phase == GameAPhase.playing)
+            // ── Griglia Esagonale Interattiva ───────────────────────────
+            if (_currentCamera != null && gameState.phase == GameAPhase.playing)
               IgnorePointer(
                 child: HexGridLayer(
                   cells: gameState.cells,
@@ -128,31 +130,30 @@ class _GameAScreenState extends ConsumerState<GameAScreen> {
                 ),
               ),
 
-            // ── HUD ──────────────────────────────────────────────────
+            // ── HUD e Controlli ─────────────────────────────────────────
             if (gameState.phase == GameAPhase.playing)
               GameAHud(
                 state: gameState,
                 onEndGame: _onEndGameRequested,
               ),
 
-            // ── Banner area trovata ───────────────────────────────────
+            // ── Banner "Area Trovata" (Feedback Positivo) ───────────────
             if (gameState.lastFoundName != null)
               FoundZoneBanner(
                 name: gameState.lastFoundName!,
                 address: gameState.lastFoundAddress ?? '',
                 safeZoneId: gameState.safeZones.firstWhere((sz) => sz.name == gameState.lastFoundName).id,
-                onDismiss: () =>
-                    ref.read(gameAProvider.notifier).clearLastFound(),
+                onDismiss: () => ref.read(gameAProvider.notifier).clearLastFound(),
               ),
 
-            // ── Tip banner ───────────────────────────────────────────
+            // ── Banner "Suggerimento" (Feedback Educativo) ──────────────
             if (_activeTip != null)
               TipBanner(
                 tip: _activeTip!,
                 onDismiss: () => setState(() => _activeTip = null),
               ),
 
-            // ── Loading ───────────────────────────────────────────────
+            // ── Overlay di Caricamento ──────────────────────────────────
             if (gameState.phase == GameAPhase.loading)
               const _LoadingOverlay(),
           ],
@@ -168,7 +169,7 @@ class _GameAScreenState extends ConsumerState<GameAScreen> {
   }
 }
 
-// ── Loading overlay ───────────────────────────────────────────────────────────
+// ── Overlay di Caricamento ────────────────────────────────────────────────────
 
 class _LoadingOverlay extends StatelessWidget {
   const _LoadingOverlay();
