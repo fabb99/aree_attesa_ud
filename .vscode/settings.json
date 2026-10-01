@@ -1,9 +1,0 @@
-{
-    "python-envs.pythonProjects": [
-        {
-            "path": "lib/features/game_a/widgets",
-            "envManager": "ms-python.python:venv",
-            "packageManager": "ms-python.python:pip"
-        }
-    ]
-}
