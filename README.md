@@ -11,13 +11,6 @@
 
 ---
 
-<!--  SEGNAPOSTO: IMMAGINE EROE (Consiglio: un'immagine con 3 mockup di telefoni affiancati che mostrano i 3 giochi) 
-<p align="center">
-  <img src="docs/hero_image_placeholder.png" alt="Aree Attesa UD App Mockup" width="800">
-</p> 
-
---- -->
-
 ## Il Progetto (Context)
 
 In caso di calamità (es. terremoto), i Piani Comunali di Protezione Civile prevedono delle **Aree di Attesa**: luoghi sicuri dove la popolazione deve radunarsi per ricevere prima assistenza. Il problema? **La maggior parte dei cittadini non sa dove si trovino.**
@@ -33,20 +26,17 @@ L'app allena l'apprendimento spaziale attraverso tre meccaniche distinte:
 ### 1. Campo Fiorito (Esplorazione)
 L'utente scopre la posizione delle aree tappando su una griglia esagonale. Il colore delle celle fornisce un feedback visivo ("caldo/freddo") sulla distanza dall'area nascosta più vicina.
 <!-- SEGNAPOSTO: GIF GIOCO A -->
-> *Gioco A*
-![Dimostrazione Gioco A](assets/gif/campo_fiorito.gif)
+> *![Dimostrazione Gioco A](assets/gif/campo_fiorito.gif)*
 
 ### 2. Localizza l'Area (Riconoscimento per nome)
 Viene fornito il nome e l'indirizzo di un'area. L'utente deve individuarla sulla mappa: ogni tap errato mostra la distanza in celle dal bersaglio, costringendo l'utente a "triangolare" la posizione corretta.
 <!-- SEGNAPOSTO: GIF GIOCO B -->
-> *Gioco B*
-![Dimostrazione Gioco B](assets/gif/localizza_l_area.gif)
+>*![Dimostrazione Gioco B](assets/gif/localizza_l_area.gif)*
 
 ### 3. GeoGuesser UD (Riconoscimento Visivo)
 Viene mostrata una fotografia reale di un'area di attesa. L'utente deve riconoscere il contesto urbano e posizionare un *pin* sulla mappa il più vicino possibile alla realtà.
 <!-- SEGNAPOSTO: GIF GIOCO C -->
-> *Gioco C*
-![Dimostrazione Gioco C](assets/gif/geoguesser.gif)
+> *![Dimostrazione Gioco C](assets/gif/geoguesser.gif)*
 
 ---
 
