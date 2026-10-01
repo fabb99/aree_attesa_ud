@@ -11,6 +11,10 @@ import '../widgets/game_c_guess_phase.dart';
 import 'game_c_round_result_screen.dart';
 import 'game_c_result_screen.dart';
 
+/// Schermata root del "Gioco C - GeoGuesser".
+/// 
+/// Gestisce l'animazione SlideTransition per passare fluidamente 
+/// dalla fase fotografica alla fase di selezione su mappa.
 class GameCScreen extends ConsumerStatefulWidget {
   const GameCScreen({super.key});
 
@@ -35,7 +39,7 @@ class _GameCScreenState extends ConsumerState<GameCScreen>
       vsync: this,
     );
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(1.0, 0.0),
+      begin: const Offset(1.0, 0.0), // Entra da destra
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _slideController,
@@ -66,6 +70,7 @@ class _GameCScreenState extends ConsumerState<GameCScreen>
     );
   }
 
+  /// Triggera l'animazione di entrata della mappa
   void _onStartGuessing() {
     ref.read(gameCProvider.notifier).startGuessing();
     _slideController.forward(from: 0);
@@ -79,6 +84,7 @@ class _GameCScreenState extends ConsumerState<GameCScreen>
   void _onConfirmGuess() {
     ref.read(gameCProvider.notifier).confirmGuess();
     final state = ref.read(gameCProvider);
+    
     if (state.phase == GameCPhase.roundResult ||
         state.phase == GameCPhase.finished) {
       Navigator.of(context).push(
@@ -98,13 +104,12 @@ class _GameCScreenState extends ConsumerState<GameCScreen>
         backgroundColor: AppColors.bgDeep,
         body: Stack(
           children: [
-            // ── Loading ─────────────────────────────────────────────
+            // ── Loading Overlay ─────────────────────────────────────────
             if (state.phase == GameCPhase.loading)
               const _LoadingOverlay(),
 
-            // ── Fase foto ───────────────────────────────────────────
-            if (state.phase == GameCPhase.showPhoto &&
-                state.targetZone != null)
+            // ── Fase Foto (Sempre sul fondo, coperta poi dalla mappa) ───
+            if (state.phase == GameCPhase.showPhoto && state.targetZone != null)
               GameCPhotoPhase(
                 state: state,
                 photoProvider: photoProvider,
@@ -112,7 +117,7 @@ class _GameCScreenState extends ConsumerState<GameCScreen>
                 onEndGame: _onEndGameRequested,
               ),
 
-            // ── Fase guess ──────────────────────────────────────────
+            // ── Fase Mappa (Entra con un'animazione slide da destra) ────
             if (state.phase == GameCPhase.guessing)
               SlideTransition(
                 position: _slideAnimation,
@@ -140,8 +145,6 @@ class _GameCScreenState extends ConsumerState<GameCScreen>
     super.dispose();
   }
 }
-
-// ── Loading overlay ───────────────────────────────────────────────────────────
 
 class _LoadingOverlay extends StatelessWidget {
   const _LoadingOverlay();

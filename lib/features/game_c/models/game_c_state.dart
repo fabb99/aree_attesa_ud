@@ -1,15 +1,16 @@
 import 'package:latlong2/latlong.dart';
 import '../../../../core/models/safe_zone.dart';
 
+/// Fasi sequenziali del Gioco C.
 enum GameCPhase {
   loading,
-  showPhoto,   // fase 1: utente guarda la foto
-  guessing,    // fase 2: utente piazza il pin sulla mappa
-  roundResult, // fase 3: feedback con linea + punteggio
-  finished,    // partita terminata
+  showPhoto,   // Fase 1: L'utente osserva la foto dell'area
+  guessing,    // Fase 2: L'utente posiziona il pin sulla mappa
+  roundResult, // Fase 3: Feedback visivo (distanza e punteggio)
+  finished,    // Partita conclusa
 }
 
-/// Risultato di un singolo round completato
+/// Risultato immutabile di un singolo round del Gioco C.
 class GameCRoundResult {
   final SafeZone targetZone;
   final LatLng guessPosition;
@@ -24,20 +25,21 @@ class GameCRoundResult {
   });
 }
 
+/// Stato principale del Gioco C gestito da Riverpod.
 class GameCState {
   final List<SafeZone> safeZones;
 
-  /// Round corrente (0-based)
+  /// Round corrente (0-based).
   final int currentRound;
   final int totalRounds;
 
-  /// Area target del round corrente
+  /// Area bersaglio del round corrente.
   final SafeZone? targetZone;
 
-  /// Pin piazzato dall'utente (null finché non ha tappato)
+  /// Posizione del pin piazzato dall'utente (null finché non tocca la mappa).
   final LatLng? guessPosition;
 
-  /// Risultati dei round completati
+  /// Risultati dei round completati.
   final List<GameCRoundResult> completedRounds;
 
   final GameCPhase phase;
@@ -52,26 +54,26 @@ class GameCState {
     this.phase = GameCPhase.loading,
   });
 
-  // ── Computed ──────────────────────────────────────────────────────────────
+  // ── Computed Properties (Getter calcolati al volo) ───────────────────────
 
-  /// Punteggio cumulativo di tutti i round completati
+  /// Punteggio cumulativo totale.
   int get totalScore => completedRounds.fold(0, (sum, r) => sum + r.score);
 
-  /// Punteggio massimo ottenibile
+  /// Punteggio massimo teorico ottenibile in questa partita.
   int get maxPossibleScore => totalRounds * 5000;
 
-  /// Percentuale punteggio (0–100)
+  /// Percentuale del punteggio ottenuto rispetto al massimo.
   int get scorePercentage =>
       maxPossibleScore == 0 ? 0 : (totalScore * 100 ~/ maxPossibleScore);
 
-  /// Distanza media in metri su tutti i round completati
+  /// Distanza media (in metri) registrata su tutti i round giocati.
   double get averageDistanceMeters {
     if (completedRounds.isEmpty) return 0;
     final total = completedRounds.fold(0.0, (sum, r) => sum + r.distanceMeters);
     return total / completedRounds.length;
   }
 
-  // ── copyWith ──────────────────────────────────────────────────────────────
+  // ── Modificatori ────────────────────────────────────────────────────────────
 
   GameCState copyWith({
     List<SafeZone>? safeZones,
@@ -88,6 +90,7 @@ class GameCState {
       currentRound: currentRound ?? this.currentRound,
       totalRounds: totalRounds ?? this.totalRounds,
       targetZone: targetZone ?? this.targetZone,
+      // Se clearGuess è true, forza il pin a null per il nuovo round
       guessPosition: clearGuess ? null : (guessPosition ?? this.guessPosition),
       completedRounds: completedRounds ?? this.completedRounds,
       phase: phase ?? this.phase,

@@ -7,6 +7,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../models/game_c_state.dart';
 import 'game_c_hud.dart';
 
+/// Fase 2 del round del Gioco C: L'utente posiziona il pin sulla mappa.
 class GameCGuessPhase extends StatelessWidget {
   final GameCState state;
   final MapController mapController;
@@ -33,7 +34,7 @@ class GameCGuessPhase extends StatelessWidget {
 
     return Stack(
       children: [
-        // ── Mappa ──────────────────────────────────────────────────
+        // ── Mappa Interattiva ───────────────────────────────────────
         FlutterMap(
           mapController: mapController,
           options: MapOptions(
@@ -52,6 +53,7 @@ class GameCGuessPhase extends StatelessWidget {
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               userAgentPackageName: 'com.example.aree_attesa_ud',
             ),
+            // Pin piazzato dall'utente
             if (state.guessPosition != null)
               MarkerLayer(
                 markers: [
@@ -73,15 +75,15 @@ class GameCGuessPhase extends StatelessWidget {
           ],
         ),
 
-        // ── HUD ────────────────────────────────────────────────────
+        // ── HUD in alto ───────────────────────────────────────────────
         Positioned(
           top: 0, 
           left: 0, 
           right: 0, 
           child: GameCHud(state: state, onEndGame: onEndGame)
-          ),
+        ),
 
-        // ── Istruzione tap ──────────────────────────────────────────
+        // ── Prompt Istruzioni (Sparisce quando si posiziona il pin) ───
         if (!hasGuess)
           Positioned(
             top: MediaQuery.of(context).padding.top + 72,
@@ -106,18 +108,18 @@ class GameCGuessPhase extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Tocca la mappa per segnare dove \n credi sia l\'area di attesa',
-                    //'Tocca la mappa per piazzare il segnalino',
+                    'Tocca la mappa per segnare dove\ncredi sia l\'area di attesa',
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.textPrimary,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
             ),
           ),
 
-        // ── Bottone conferma + nome area ────────────────────────────
+        // ── Bottom Bar: Nome Area e Bottone Conferma ──────────────────
         Positioned(
           bottom: MediaQuery.of(context).padding.bottom + 24,
           left: 20,
@@ -136,8 +138,6 @@ class GameCGuessPhase extends StatelessWidget {
     );
   }
 }
-
-// ── Box nome area ─────────────────────────────────────────────────────────────
 
 class _TargetNameBox extends StatelessWidget {
   final String name;
@@ -159,17 +159,16 @@ class _TargetNameBox extends StatelessWidget {
           const Icon(Icons.search, color: AppColors.gameCLight, size: 16),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(name, style: AppTextStyles.body.copyWith(
-              fontWeight: FontWeight.w600,
-            )),
+            child: Text(
+              name, 
+              style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),
     );
   }
 }
-
-// ── Bottone conferma ──────────────────────────────────────────────────────────
 
 class _ConfirmButton extends StatelessWidget {
   final bool hasGuess;
@@ -185,6 +184,7 @@ class _ConfirmButton extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
+        // Bottone disabilitato se l'utente non ha ancora piazzato il pin
         onPressed: hasGuess ? onConfirm : null,
         icon: const Icon(Icons.check_rounded),
         label: const Text('Conferma la mia ipotesi'),

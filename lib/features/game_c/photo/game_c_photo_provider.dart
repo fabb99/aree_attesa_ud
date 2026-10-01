@@ -2,16 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/theme/app_colors.dart';
 
+/// Interfaccia contrattuale per il fornitore di fotografie.
+/// 
+/// Questa astrazione permette in futuro di scambiare facilmente la sorgente
+/// delle immagini (es. da Assets locali a Network/API) senza toccare la UI.
 abstract class GameCPhotoProvider {
   Widget buildPhotoGallery(int safeZoneId, {double? height});
 }
 
-// ─── Implementazione Asset Locale ─────────────────────────────────────────────
+// ─── Implementazione Asset Locale ───────────────────────────────────────────
 
-/// Carica le foto da assets/safeZones/{id}/1.jpeg, 2.jpeg, 3.jpeg ...
-/// Si ferma al primo file mancante.
+/// Implementazione che carica le foto dalla cartella locale degli assets.
+/// 
+/// Gestisce dinamicamente un numero variabile di foto per area provando
+/// a caricare `1.jpeg`, `2.jpeg` ecc. finché non cattura un'eccezione
+/// di "file non trovato", determinando così la fine della galleria.
 class AssetPhotoProvider implements GameCPhotoProvider {
-  /// Numero massimo di foto da cercare per area (sicurezza)
+  /// Limite massimo di foto per prevenire loop infiniti imprevisti.
   final int maxPhotos;
 
   const AssetPhotoProvider({this.maxPhotos = 20});
@@ -19,17 +26,17 @@ class AssetPhotoProvider implements GameCPhotoProvider {
   String _path(int safeZoneId, int index) =>
       'assets/safeZones/$safeZoneId/$index.jpeg';
 
-  /// Prova a caricare 1.jpeg, 2.jpeg... finché non fallisce.
-  /// Restituisce la lista dei path esistenti.
+  /// Esplora in modo asincrono l'esistenza delle foto per l'area specificata.
   Future<List<String>> _loadPaths(int safeZoneId) async {
     final paths = <String>[];
     for (int i = 1; i <= maxPhotos; i++) {
       final path = _path(safeZoneId, i);
       try {
+        // Tenta il caricamento in memoria. Se il file non esiste, lancia eccezione.
         await rootBundle.load(path);
         paths.add(path);
       } catch (_) {
-        break; // file non trovato → ci fermiamo
+        break; // Primo file mancante trovato, fine della galleria.
       }
     }
     return paths;
@@ -45,7 +52,7 @@ class AssetPhotoProvider implements GameCPhotoProvider {
   }
 }
 
-// ─── Widget asincrono ─────────────────────────────────────────────────────────
+// ─── Widget Asincrono Interno ───────────────────────────────────────────────
 
 class _AsyncPhotoGallery extends StatefulWidget {
   final int safeZoneId;
@@ -79,8 +86,10 @@ class _AsyncPhotoGalleryState extends State<_AsyncPhotoGallery> {
         if (snapshot.connectionState != ConnectionState.done) {
           return _LoadingPlaceholder(height: widget.height);
         }
+        
         final paths = snapshot.data ?? [];
         if (paths.isEmpty) return _Placeholder(height: widget.height);
+        
         if (paths.length == 1) {
           return Image.asset(
             paths.first,
@@ -90,13 +99,14 @@ class _AsyncPhotoGalleryState extends State<_AsyncPhotoGallery> {
             errorBuilder: (_, __, ___) => _Placeholder(height: widget.height),
           );
         }
+        
         return _PhotoGallery(paths: paths, height: widget.height);
       },
     );
   }
 }
 
-// ─── Gallery con PageView ──────────────────────────────────────────────────────
+// ─── Galleria Interattiva (PageView) ──────────────────────────────────────────
 
 class _PhotoGallery extends StatefulWidget {
   final List<String> paths;
@@ -126,12 +136,11 @@ class _PhotoGalleryState extends State<_PhotoGallery> {
               widget.paths[i],
               width: double.infinity,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) =>
-                  _Placeholder(height: widget.height),
+              errorBuilder: (_, __, ___) => _Placeholder(height: widget.height),
             ),
           ),
 
-          // Indicatore punti
+          // ── Indicatori a punti in basso ──
           Positioned(
             bottom: 12,
             left: 0,
@@ -156,13 +165,12 @@ class _PhotoGalleryState extends State<_PhotoGallery> {
             ),
           ),
 
-          // Contatore X / Y
+          // ── Contatore X / Y in alto a destra ──
           Positioned(
             top: 12,
             right: 12,
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: Colors.black.withAlpha(140),
                 borderRadius: BorderRadius.circular(20),
@@ -189,7 +197,7 @@ class _PhotoGalleryState extends State<_PhotoGallery> {
   }
 }
 
-// ─── Placeholder ──────────────────────────────────────────────────────────────
+// ─── Placeholder Fallback ─────────────────────────────────────────────────────
 
 class _LoadingPlaceholder extends StatelessWidget {
   final double? height;
@@ -214,7 +222,7 @@ class _Placeholder extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         height: height,
         width: double.infinity,
-        color:  AppColors.bgDark,
+        color: AppColors.bgDark,
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

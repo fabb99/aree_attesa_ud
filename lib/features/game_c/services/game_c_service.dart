@@ -3,52 +3,48 @@ import 'package:latlong2/latlong.dart';
 import '../../../../core/models/safe_zone.dart';
 import '../config/game_c_config.dart';
 
-/// Logica pura del Gioco C.
-/// Nessuna dipendenza da Flutter o Riverpod — facilmente testabile.
+/// Logica pura (Business Logic) del Gioco C.
 class GameCService {
-  // Usa la Distance di latlong2 per calcoli geodetici accurati
+  // Utilizza latlong2 per calcoli geodetici accurati (considera la curvatura terrestre)
   static const _distance = Distance();
 
-  // ── Distanza ──────────────────────────────────────────────────────────────
+  // ── Calcolo Distanza ────────────────────────────────────────────────────────
 
-  /// Distanza in metri tra guess e target (Haversine).
+  /// Calcola la distanza reale in metri tra il guess dell'utente e il target.
   double distanceMeters(LatLng guess, LatLng target) {
     return _distance.as(LengthUnit.Meter, guess, target);
   }
 
-  // ── Punteggio ─────────────────────────────────────────────────────────────
+  // ── Calcolo Punteggio ───────────────────────────────────────────────────────
 
-  /// Curva punteggio esponenziale stile GeoGuesser.
+  /// Calcola il punteggio applicando una curva di decadimento esponenziale.
   ///
-  /// Formula: score = maxScore * e^(-d / D)
-  ///   d = distanza in metri
-  ///   D = GameCConfig.scoreCurveMeters (costante di decadimento)
+  /// Formula: `score = maxScore * e^(-d / k)`
+  /// Dove:
+  /// - `d` è la distanza in metri.
+  /// - `k` è la costante di decadimento [GameCConfig.scoreCurveMeters].
   ///
-  /// Esempi con D=500:
-  ///   0m   → 5000 pt
-  ///   100m → ~4095 pt
-  ///   500m → ~1839 pt
-  ///   1km  → ~676 pt
-  ///   2km  → ~91 pt
-  ///   5km  → 0 pt (clamp)
+  /// Questa formula premia molto la precisione estrema e penalizza
+  /// progressivamente gli errori, evitando i difetti delle scale lineari.
   int calculateScore(double distMeters) {
+    // Taglio netto: oltre la distanza massima il punteggio è zero
     if (distMeters >= GameCConfig.maxDistanceMeters) return 0;
+    
     final raw = GameCConfig.maxScorePerRound *
         exp(-distMeters / GameCConfig.scoreCurveMeters);
+        
     return raw.round().clamp(0, GameCConfig.maxScorePerRound);
   }
 
-  // ── Selezione target ──────────────────────────────────────────────────────
+  // ── Utility ─────────────────────────────────────────────────────────────────
 
-  /// Seleziona [count] safe zone casuali senza ripetizioni.
+  /// Seleziona casualmente le aree di attesa per la partita corrente.
   List<SafeZone> pickRoundTargets(List<SafeZone> safeZones, int count) {
     final shuffled = List<SafeZone>.from(safeZones)..shuffle();
     return shuffled.take(count.clamp(0, shuffled.length)).toList();
   }
 
-  // ── Label distanza leggibile ──────────────────────────────────────────────
-
-  /// Formatta la distanza in modo leggibile (es. "234 m", "1.2 km").
+  /// Formatta la distanza in un formato user-friendly.
   String formatDistance(double meters) {
     if (meters < 1000) {
       return '${meters.round()} m';
@@ -56,14 +52,13 @@ class GameCService {
     return '${(meters / 1000).toStringAsFixed(1)} km';
   }
 
-  // ── Label punteggio ───────────────────────────────────────────────────────
-
+  /// Restituisce un feedback testuale in base al punteggio ottenuto.
   String scoreLabel(int score) {
-    if (score >= 4500) return '🎯 Precisione assoluta!';
-    if (score >= 3500) return '🏆 Eccellente!';
-    if (score >= 2500) return '👍 Ottimo!';
-    if (score >= 1500) return '📚 Quasi!';
-    if (score >= 500)  return '🗺️ Continua ad esplorare!';
-    return '💪 Riprova!';
+    if (score >= 4500) return 'Precisione assoluta!';
+    if (score >= 3500) return 'Eccellente!';
+    if (score >= 2500) return 'Ottimo!';
+    if (score >= 1500) return 'Quasi!';
+    if (score >= 500)  return 'Continua ad esplorare!';
+    return 'Riprova!';
   }
 }

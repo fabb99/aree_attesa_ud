@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/ui/app_result_actions.dart';
@@ -8,6 +9,7 @@ import '../models/game_c_state.dart';
 import '../providers/game_c_provider.dart';
 import 'game_c_screen.dart';
 
+/// Schermata finale riepilogativa dell'intera partita (Gioco C).
 class GameCResultScreen extends ConsumerWidget {
   const GameCResultScreen({super.key});
 
@@ -58,7 +60,7 @@ class GameCResultScreen extends ConsumerWidget {
   }
 }
 
-// ── Header punteggio ──────────────────────────────────────────────────────────
+// ── Header Punteggio ──────────────────────────────────────────────────────────
 
 class _ScoreHeader extends StatelessWidget {
   final GameCState state;
@@ -70,6 +72,7 @@ class _ScoreHeader extends StatelessWidget {
     final pct = state.scorePercentage;
     final color = AppScoreRing.colorFor(pct, 100);
     final avgDist = state.averageDistanceMeters;
+    
     final avgLabel = avgDist < 1000
         ? '${avgDist.round()} m in media'
         : '${(avgDist / 1000).toStringAsFixed(1)} km in media';
@@ -105,8 +108,7 @@ class _ScoreHeader extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            '${state.completedRounds.length} round · '
-            'max ${state.maxPossibleScore} pt · $avgLabel',
+            '${state.completedRounds.length} round · max ${state.maxPossibleScore} pt\n$avgLabel',
             style: AppTextStyles.caption,
             textAlign: TextAlign.center,
           ),
@@ -123,7 +125,7 @@ class _ScoreHeader extends StatelessWidget {
   }
 }
 
-// ── Card round ────────────────────────────────────────────────────────────────
+// ── Card Riepilogo Round ──────────────────────────────────────────────────────
 
 class _RoundSummaryCard extends StatelessWidget {
   final int roundNumber;
@@ -202,7 +204,7 @@ class _RoundSummaryCard extends StatelessWidget {
   }
 }
 
-// ── Badge numero round ────────────────────────────────────────────────────────
+// ── Badge Numero Round ────────────────────────────────────────────────────────
 
 class _RoundBadge extends StatelessWidget {
   final int number;

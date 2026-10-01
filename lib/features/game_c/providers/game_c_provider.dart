@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-//import '../../../core/app_providers.dart';
 import '../../../../core/data/grid_repository.dart';
 import '../../../../core/data/safe_zone_repository.dart';
 import '../../../../core/models/safe_zone.dart';
@@ -9,29 +9,27 @@ import '../models/game_c_state.dart';
 import '../services/game_c_service.dart';
 import '../photo/game_c_photo_provider.dart';
 
-// ─── Repository providers ────────────────────────────────────────────────────
-//
-// Definiti in core/app_providers.dart — re-export per retrocompatibilità
-// con le screen che li importano da questo file.
+// Esporta i repository core per facilitare l'importazione dalle schermate.
 export '../../../core/providers/app_providers.dart'
     show gridRepositoryProvider, safeZoneRepositoryProvider;
 
-// ─── Photo provider ───────────────────────────────────────────────────────────
+// ─── Photo Provider ─────────────────────────────────────────────────────────
 
-
+/// Fornisce l'implementazione concreta per il caricamento delle fotografie.
 final gameCPhotoProvider = Provider<GameCPhotoProvider>(
   (_) => const AssetPhotoProvider(),
 );
 
-// ─── Game C notifier ──────────────────────────────────────────────────────────
+// ─── Game C Notifier ────────────────────────────────────────────────────────
 
+/// Gestore di stato per il Gioco C (GeoGuesser).
 class GameCNotifier extends StateNotifier<GameCState> {
   GameCNotifier() : super(GameCState.initial());
 
   final GameCService _service = GameCService();
   List<SafeZone> _roundTargets = [];
 
-  /// Inizializza la partita caricando griglia, safe zone e target dei round.
+  /// Inizializza la partita caricando le aree di attesa e selezionando i target.
   Future<void> initGame({
     required GridRepository gridRepo,
     required SafeZoneRepository szRepo,
@@ -53,28 +51,27 @@ class GameCNotifier extends StateNotifier<GameCState> {
         totalRounds: GameCConfig.roundsPerGame,
         targetZone: _roundTargets[0],
         completedRounds: [],
-        phase: GameCPhase.showPhoto,
+        phase: GameCPhase.showPhoto, // Parte mostrando la foto del primo round
       );
     } catch (e, stack) {
-      // ignore: avoid_print
-      print('[GameC] Errore caricamento: $e\n$stack');
+      debugPrint('[GameC] Errore caricamento: $e\n$stack');
       rethrow;
     }
   }
 
-  /// Avanza dalla fase [GameCPhase.showPhoto] alla fase [GameCPhase.guessing].
+  /// Transita dalla fase di osservazione della foto a quella della mappa.
   void startGuessing() {
     if (state.phase != GameCPhase.showPhoto) return;
     state = state.copyWith(phase: GameCPhase.guessing, clearGuess: true);
   }
 
-  /// Aggiorna la posizione del pin sulla mappa durante la fase di guess.
+  /// Aggiorna la posizione del pin trascinato o tappato sulla mappa.
   void updateGuess(LatLng position) {
     if (state.phase != GameCPhase.guessing) return;
     state = state.copyWith(guessPosition: position);
   }
 
-  /// Conferma la guess corrente, calcola distanza e punteggio e salva il round.
+  /// Conferma la guess corrente, calcola il punteggio tramite il Service e salva il round.
   void confirmGuess() {
     if (state.phase != GameCPhase.guessing) return;
     if (state.guessPosition == null || state.targetZone == null) return;
@@ -100,10 +97,11 @@ class GameCNotifier extends StateNotifier<GameCState> {
     );
   }
 
-  /// Avanza al round successivo dopo la schermata di risultato intermedio.
+  /// Avanza al round successivo dopo la schermata dei risultati intermedi.
   void nextRound() {
     if (state.phase != GameCPhase.roundResult) return;
     final nextIndex = state.currentRound + 1;
+    
     state = state.copyWith(
       currentRound: nextIndex,
       targetZone: _roundTargets[nextIndex],
@@ -112,14 +110,16 @@ class GameCNotifier extends StateNotifier<GameCState> {
     );
   }
 
+  /// Forza la fine anticipata del gioco.
   void endGame() {
     if (state.phase != GameCPhase.guessing &&
         state.phase != GameCPhase.showPhoto) {
-          return;
-          }
+      return;
+    }
     state = state.copyWith(phase: GameCPhase.finished);
   }
 
+  /// Rende disponibile il Service per accedere alle utility di formattazione dalla UI.
   GameCService get service => _service;
 }
 

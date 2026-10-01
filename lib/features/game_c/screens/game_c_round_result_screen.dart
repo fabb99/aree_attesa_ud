@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/widgets/ui/app_stat_chip.dart';
 import '../../../core/widgets/ui/app_score_ring.dart';
-import '../../../core/widgets/ui/tip_banner.dart';   // ← nuovo
-import '../../../core/widgets/ui/app_tips.dart';      // ← nuovo
+import '../../../core/widgets/ui/app_stat_chip.dart';
+import '../../../core/widgets/ui/app_tips.dart';
+import '../../../core/widgets/ui/tip_banner.dart';
 import '../models/game_c_state.dart';
 import '../providers/game_c_provider.dart';
 import '../services/game_c_service.dart';
 import 'game_c_result_screen.dart';
 
+/// Schermata dei risultati intermedi del Gioco C.
+/// 
+/// Mostra sulla mappa la distanza tra il pin piazzato dall'utente e la 
+/// posizione reale dell'area di attesa, con un'animazione progressiva del punteggio.
 class GameCRoundResultScreen extends ConsumerStatefulWidget {
   const GameCRoundResultScreen({super.key});
 
@@ -28,18 +33,17 @@ class _GameCRoundResultScreenState
   late final AnimationController _scoreAnimController;
   late final Animation<int> _scoreAnim;
 
-  // ── Tip: selezionata una volta al montaggio, dismissibile ─────────────────
-  late AppTip? _activeTip;
+  // Tip selezionata dinamicamente e mostrata solo in questa schermata
+  AppTip? _activeTip;
 
   @override
   void initState() {
     super.initState();
 
     final lastRound = ref.read(gameCProvider).completedRounds.last;
-
-    // Seleziona una tip casuale una volta sola per questo round
     _activeTip = AppTips.pickRandom('gameC');
 
+    // Animazione stile Arcade per far "scorrere" il punteggio da 0 al valore reale
     _scoreAnimController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
@@ -49,6 +53,7 @@ class _GameCRoundResultScreenState
     );
     _scoreAnimController.forward();
 
+    // Centra la mappa su entrambi i pin (User e Target) dopo il render
     WidgetsBinding.instance.addPostFrameCallback((_) => _fitBounds());
   }
 
@@ -91,20 +96,19 @@ class _GameCRoundResultScreenState
         backgroundColor: AppColors.bgDeep,
         body: Stack(
           children: [
-            // ── Mappa ────────────────────────────────────────────────
+            // ── Mappa con i due Pin e la Linea Tratteggiata ────────────
             FlutterMap(
               mapController: _mapController,
               options: MapOptions(
                 initialCenter: last.targetZone.position,
-                initialZoom: AppConstants.defaultZoom,
+                initialZoom: 13.5,
                 interactionOptions: const InteractionOptions(
                   enableMultiFingerGestureRace: true,
                 ),
               ),
               children: [
                 TileLayer(
-                  urlTemplate:
-                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.aree_attesa_ud',
                 ),
                 PolylineLayer(
@@ -136,7 +140,7 @@ class _GameCRoundResultScreenState
               ],
             ),
 
-            // ── Pannello risultato ────────────────────────────────────
+            // ── Pannello Risultato ────────────────────────────────────
             Positioned(
               bottom: 0,
               left: 0,
@@ -151,12 +155,12 @@ class _GameCRoundResultScreenState
               ),
             ),
 
-            // ── Tip banner ───────────────────────────────────────────
+            // ── Banner Tip ────────────────────────────────────────────
             if (_activeTip != null)
               TipBanner(
                 tip: _activeTip!,
                 onDismiss: () => setState(() => _activeTip = null),
-                topOffset: 12,
+                topOffset: 12, // Più in alto perché non c'è l'HUD qui
               ),
           ],
         ),
@@ -172,7 +176,7 @@ class _GameCRoundResultScreenState
   }
 }
 
-// ── Pin personalizzato ────────────────────────────────────────────────────────
+// ── Pin Personalizzato ────────────────────────────────────────────────────────
 
 class _PinWidget extends StatelessWidget {
   final Color color;
@@ -192,16 +196,23 @@ class _PinWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(6),
             boxShadow: const [BoxShadow(color: Colors.black38, blurRadius: 4, offset: Offset(0, 2))],
           ),
-          child: Text(label, style: AppTextStyles.buttonSmall.copyWith(fontSize: 11, color: Colors.white)),
+          child: Text(
+            label, 
+            style: AppTextStyles.buttonSmall.copyWith(fontSize: 11, color: Colors.white)
+          ),
         ),
-        Icon(Icons.location_on, color: color, size: 36,
-            shadows: const [Shadow(color: Colors.black54, blurRadius: 6)]),
+        Icon(
+          Icons.location_on, 
+          color: color, 
+          size: 36,
+          shadows: const [Shadow(color: Colors.black54, blurRadius: 6)],
+        ),
       ],
     );
   }
 }
 
-// ── Pannello risultato ────────────────────────────────────────────────────────
+// ── Pannello Risultato Inferiore ──────────────────────────────────────────────
 
 class _ResultPanel extends StatelessWidget {
   final GameCState state;
@@ -247,16 +258,35 @@ class _ResultPanel extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: AppStatChip(label: 'Distanza', value: distLabel, icon: Icons.straighten, color: AppColors.gameBLight)),
+              Expanded(
+                child: AppStatChip(
+                  label: 'Distanza', 
+                  value: distLabel, 
+                  icon: Icons.straighten, 
+                  color: AppColors.gameBLight
+                )
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: AnimatedBuilder(
                   animation: scoreAnim,
-                  builder: (_, __) => AppStatChip(label: 'Punti round', value: '${scoreAnim.value}', icon: Icons.star_rounded, color: scoreColor),
+                  builder: (_, __) => AppStatChip(
+                    label: 'Punti round', 
+                    value: '${scoreAnim.value}', 
+                    icon: Icons.star_rounded, 
+                    color: scoreColor
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
-              Expanded(child: AppStatChip(label: 'Totale', value: '${state.totalScore}', icon: Icons.emoji_events_rounded, color: AppColors.gold)),
+              Expanded(
+                child: AppStatChip(
+                  label: 'Totale', 
+                  value: '${state.totalScore}', 
+                  icon: Icons.emoji_events_rounded, 
+                  color: AppColors.gold
+                )
+              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -273,7 +303,12 @@ class _ResultHeader extends StatelessWidget {
   final int currentRound;
   final int totalRounds;
 
-  const _ResultHeader({required this.label, required this.scoreColor, required this.currentRound, required this.totalRounds});
+  const _ResultHeader({
+    required this.label, 
+    required this.scoreColor, 
+    required this.currentRound, 
+    required this.totalRounds
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -347,8 +382,4 @@ class _NextButton extends StatelessWidget {
       ),
     );
   }
-}
-
-class AppConstants {
-  static const defaultZoom = 13.5;
 }
