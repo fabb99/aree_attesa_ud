@@ -118,10 +118,10 @@ class _ScoreHeader extends StatelessWidget {
   }
 
   String _label(int pct) {
-    if (pct >= 90) return '🏆 Esperto del territorio!';
-    if (pct >= 60) return '👍 Ottima conoscenza!';
-    if (pct >= 30) return '📚 Continua ad esplorare!';
-    return '🗺️ Udine ti aspetta!';
+    if (pct >= 85) return 'Esperto del territorio!';
+    if (pct >= 50) return 'Ottima conoscenza!';
+    if (pct >= 25) return 'Continua ad esplorare!';
+    return 'Udine ti aspetta!';
   }
 }
 
