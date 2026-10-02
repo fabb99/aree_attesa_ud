@@ -5,6 +5,9 @@
 ![Riverpod](https://img.shields.io/badge/Riverpod-State_Management-blue?style=for-the-badge)
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 
+### [CLICCA QUI PER PROVARE LA DEMO WEB](https://fabb99.github.io/aree_attesa_ud/) 🎮
+*(Note: la demo web è ottimizzata per la visualizzazione mobile. Se sei da PC, ti consigliamo di ridimensionare la finestra del browser o usare i DevTools (F12) in modalità smartphone).*
+
 > Un'applicazione mobile basata sul *Game-Based Learning* per educare i cittadini a localizzare le aree di emergenza della Protezione Civile, trasformando dati cartografici in un'esperienza interattiva che salva vite.
 
 🎓 **Progetto di Tesi di Laurea in Informatica** - *Università degli Studi di Udine* (A.A. 2025-2026).
@@ -25,22 +28,22 @@ L'app allena l'apprendimento spaziale attraverso tre meccaniche distinte:
 
 ### 1. Campo Fiorito (Esplorazione)
 L'utente scopre la posizione delle aree tappando su una griglia esagonale. Il colore delle celle fornisce un feedback visivo ("caldo/freddo") sulla distanza dall'area nascosta più vicina.
-<!-- SEGNAPOSTO: GIF GIOCO A -->
+
 > *![Dimostrazione Gioco A](assets/gif/campo_fiorito.gif)*
 
 ### 2. Localizza l'Area (Riconoscimento per nome)
 Viene fornito il nome e l'indirizzo di un'area. L'utente deve individuarla sulla mappa: ogni tap errato mostra la distanza in celle dal bersaglio, costringendo l'utente a "triangolare" la posizione corretta.
-<!-- SEGNAPOSTO: GIF GIOCO B -->
+
 >*![Dimostrazione Gioco B](assets/gif/localizza_l_area.gif)*
 
 ### 3. GeoGuesser UD (Riconoscimento Visivo)
 Viene mostrata una fotografia reale di un'area di attesa. L'utente deve riconoscere il contesto urbano e posizionare un *pin* sulla mappa il più vicino possibile alla realtà.
-<!-- SEGNAPOSTO: GIF GIOCO C -->
+
 > *![Dimostrazione Gioco C](assets/gif/geoguesser.gif)*
 
 ---
 
-## Under the Hood (Architecture & Tech Stack)
+## Architecture & Tech Stack
 
 Il progetto è stato sviluppato con **Flutter** applicando rigorosi principi di Ingegneria del Software per garantire scalabilità e manutenibilità.
 
@@ -75,10 +78,10 @@ Per eseguire il progetto in locale:
 
 ```bash
 # 1. Clona il repository
-git clone https://github.com/fabb99/aree-attesa-ud.git
+git clone https://github.com/fabb99/aree_attesa_ud.git
 
 # 2. Entra nella cartella del progetto
-cd aree-attesa-ud
+cd aree_attesa_ud
 
 # 3. Scarica le dipendenze
 flutter pub get
