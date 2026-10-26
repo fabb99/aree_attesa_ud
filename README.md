@@ -67,9 +67,8 @@ L'applicazione mobile è *client-side* e funziona offline per la logica di gioco
 
 Sono stati sviluppati due script **Python** (`geopandas`, `shapely`) che:
 1.  Interrogano le API REST di **Nominatim** per estrarre i confini comunali esatti.
-2.  Generano una griglia *flat-topped* con raggio di 183 metri (bilanciata matematicamente per il gameplay).
-3.  Eseguono uno *spatial join* tra gli esagoni e gli open-data GeoJSON della Protezione Civile FVG per creare il file `grid.json` servito all'app.
-
+2. Calcolano la griglia esagonale flat-topped di raggio 183 metri a partire dal rettangolo che racchiude i punti più distanti dei confini.
+3.  Tengono solo gli esagoni interni ai confini e li salvano in grid.json, che contiene per ogni esagono le coordinate, l’id e gli id degli esagoni vicini.
 ---
 
 ## Quickstart
